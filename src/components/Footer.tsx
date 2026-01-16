@@ -7,9 +7,9 @@ export default function Footer() {
             <div className="container-custom grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
                 {/* Brand */}
                 <div className="space-y-4">
-                    <h3 className="text-2xl font-bold text-white">ONG Green Tchad</h3>
+                    <h3 className="text-2xl font-bold text-white">ONG Green-Chad</h3>
                     <p className="text-sm leading-relaxed max-w-xs">
-                        Mission : Outiller les citoyens tchadiens pour relever le défi du développement durable et protéger notre environnement.
+                        Mission : Outiller les citoyens tchadiens pour leur permettre de relever efficacement le défi du développement durable et protéger notre environnement.
                     </p>
                     <div className="flex gap-4">
                         <Link href="#" className="hover:text-green-500 transition-colors"><Facebook className="h-5 w-5" /></Link>
@@ -69,7 +69,7 @@ export default function Footer() {
                 </div>
             </div>
             <div className="container-custom mt-16 pt-8 border-t border-slate-800 text-center text-sm text-slate-500">
-                <p>© {new Date().getFullYear()} ONG Green Tchad. Tous droits réservés.</p>
+                <p>© {new Date().getFullYear()} ONG Green-Chad. Tous droits réservés.</p>
             </div>
         </footer>
     );

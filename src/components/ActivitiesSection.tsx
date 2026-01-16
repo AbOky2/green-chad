@@ -1,38 +1,48 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CloudRain, HeartPulse, GraduationCap, Sun, Users, Sprout } from "lucide-react";
+import { Sprout, GraduationCap, Handshake, Briefcase, ShieldAlert, HeartPulse, Droplets, Wheat } from "lucide-react";
 
 const activities = [
     {
-        icon: CloudRain,
-        title: "Changement Climatique",
-        description: "Sensibilisation, recherche et projets d'adaptation face aux défis climatiques.",
-    },
-    {
         icon: Sprout,
-        title: "Environnement",
-        description: "Protection de la biodiversité et actions de reboisement.",
-    },
-    {
-        icon: HeartPulse,
-        title: "Santé Communautaire",
-        description: "Prévention et amélioration de l'accès aux soins pour les populations vulnérables.",
-    },
-    {
-        icon: Users,
-        title: "Autonomisation des Femmes",
-        description: "Formation et soutien aux initiatives économiques des femmes.",
+        title: "L'environnement",
+        description: "Protection de la biodiversité, reboisement et lutte contre le changement climatique.",
     },
     {
         icon: GraduationCap,
-        title: "Éducation & Jeunesse",
-        description: "Renforcement des capacités des jeunes leaders écologiques.",
+        title: "L'éducation",
+        description: "Promotion de l'éducation pour tous, alphabétisation et sensibilisation scolaire.",
     },
     {
-        icon: Sun,
-        title: "Énergies Renouvelables",
-        description: "Promotion et installations de solutions énergétiques durables (solaire, etc.).",
+        icon: Handshake,
+        title: "La paix",
+        description: "Renforcement de la cohésion sociale et prévention des conflits communautaires.",
+    },
+    {
+        icon: Briefcase,
+        title: "Formation Technique",
+        description: "Apprentissage de métiers et renforcement des capacités pour l'insertion socio-professionnelle.",
+    },
+    {
+        icon: ShieldAlert,
+        title: "VBG",
+        description: "Lutte contre les Violences Basées sur le Genre et protection des personnes vulnérables.",
+    },
+    {
+        icon: HeartPulse,
+        title: "La Santé",
+        description: "Amélioration de l'accès aux soins de base et campagnes de prévention sanitaire.",
+    },
+    {
+        icon: Droplets,
+        title: "WASH",
+        description: "Accès à l'eau potable, infrastructures d'assainissement et promotion de l'hygiène.",
+    },
+    {
+        icon: Wheat,
+        title: "La Sécurité Alimentaire",
+        description: "Soutien à l'agriculture durable et lutte contre la malnutrition.",
     },
 ];
 

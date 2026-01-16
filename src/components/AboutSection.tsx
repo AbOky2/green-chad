@@ -44,7 +44,7 @@ export default function About() {
                                 Engagés pour le Tchad de demain
                             </h2>
                             <p className="mt-6 text-slate-600 text-lg leading-relaxed">
-                                L'ONG Green Tchad est née de la volonté de préserver notre patrimoine naturel tout en favorisant le développement socio-économique.
+                                L'ONG Green-Chad est née de la volonté de préserver notre patrimoine naturel tout en favorisant le développement socio-économique.
                                 Nous croyons que la protection de l'environnement est indissociable du bien-être des populations.
                             </p>
                             <div className="mt-8 space-y-6">
@@ -81,7 +81,7 @@ export default function About() {
                                     <div className="absolute inset-0 bg-gradient-to-t from-green-900/50 to-transparent flex items-end p-8">
                                         <div className="text-white">
                                             <p className="font-bold text-xl">Abdallah Soumaine</p>
-                                            <p className="text-green-200">Président, Green Tchad</p>
+                                            <p className="text-green-200">Coordinateur National, Green-Chad</p>
                                         </div>
                                     </div>
                                 </div>

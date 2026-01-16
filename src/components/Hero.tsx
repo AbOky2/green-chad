@@ -47,7 +47,7 @@ export default function Hero() {
                     </h1>
 
                     <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-                        Notre mission : Outiller les citoyens pour relever les défis du développement durable et protéger notre préciux environnement.
+                        Notre mission : Outiller les citoyens pour leur permettre de relever efficacement les défis du développement durable et protéger notre préciux environnement.
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

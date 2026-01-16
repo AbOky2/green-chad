@@ -28,9 +28,8 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 z-50 w-full transition-all duration-300 ${
-        scrolled ? "bg-white/90 backdrop-blur-md shadow-sm py-4" : "bg-transparent py-6"
-      }`}
+      className={`fixed top-0 z-50 w-full transition-all duration-300 ${scrolled ? "bg-white/90 backdrop-blur-md shadow-sm py-4" : "bg-transparent py-6"
+        }`}
     >
       <div className="container-custom flex items-center justify-between">
         {/* Logo */}
@@ -44,7 +43,7 @@ export default function Header() {
             />
           </div>
           <span className={`text-xl font-bold tracking-tight ${scrolled ? "text-slate-900" : "text-slate-900 lg:text-white"}`}>
-            ONG Green Tchad
+            Green-Chad
           </span>
         </Link>
 
@@ -54,18 +53,16 @@ export default function Header() {
             <Link
               key={link.name}
               href={link.href}
-              className={`text-sm font-medium transition-colors hover:text-green-500 ${
-                scrolled ? "text-slate-600" : "text-white/90 hover:text-white"
-              }`}
+              className={`text-sm font-medium transition-colors hover:text-green-500 ${scrolled ? "text-slate-600" : "text-white/90 hover:text-white"
+                }`}
             >
               {link.name}
             </Link>
           ))}
           <Link
             href="#donate"
-            className={`btn-primary !px-5 !py-2 !text-sm flex items-center gap-2 ${
-              !scrolled && "bg-white text-green-700 hover:bg-green-50"
-            }`}
+            className={`btn-primary !px-5 !py-2 !text-sm flex items-center gap-2 ${!scrolled && "bg-white text-green-700 hover:bg-green-50"
+              }`}
           >
             <Heart className="h-4 w-4" fill="currentColor" />
             Nous Soutenir
