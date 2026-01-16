@@ -28,7 +28,7 @@ export default function Contact() {
                                 </div>
                                 <div>
                                     <h4 className="text-lg font-bold text-slate-900">Notre Adresse</h4>
-                                    <p className="text-slate-600">Quartier Ridina, N'Djamena, Tchad</p>
+                                    <p className="text-slate-600">Quartier Repos 2, N'Djamena, Tchad</p>
                                 </div>
                             </div>
 
