@@ -59,14 +59,14 @@ export default function Header() {
               {link.name}
             </Link>
           ))}
-          <Link
+          {/* <Link
             href="#donate"
             className={`btn-primary !px-5 !py-2 !text-sm flex items-center gap-2 ${!scrolled && "bg-white text-green-700 hover:bg-green-50"
               }`}
           >
             <Heart className="h-4 w-4" fill="currentColor" />
             Nous Soutenir
-          </Link>
+          </Link> */}
         </nav>
 
         {/* Mobile Menu Button */}
@@ -98,14 +98,14 @@ export default function Header() {
                   {link.name}
                 </Link>
               ))}
-              <Link
+              {/* <Link
                 href="#donate"
                 className="btn-primary w-full flex justify-center gap-2"
                 onClick={() => setIsOpen(false)}
               >
                 <Heart className="h-4 w-4" fill="currentColor" />
                 Nous Soutenir
-              </Link>
+              </Link> */}
             </nav>
           </motion.div>
         )}

@@ -12,10 +12,9 @@ export default function Footer() {
                         Mission : Outiller les citoyens tchadiens pour leur permettre de relever efficacement le défi du développement durable et protéger notre environnement.
                     </p>
                     <div className="flex gap-4">
-                        <Link href="#" className="hover:text-green-500 transition-colors"><Facebook className="h-5 w-5" /></Link>
-                        <Link href="#" className="hover:text-green-500 transition-colors"><Twitter className="h-5 w-5" /></Link>
-                        <Link href="#" className="hover:text-green-500 transition-colors"><Instagram className="h-5 w-5" /></Link>
-                        <Link href="#" className="hover:text-green-500 transition-colors"><Linkedin className="h-5 w-5" /></Link>
+                        <Link href="https://www.facebook.com/ONGGreenchad/" className="hover:text-green-500 transition-colors"><Facebook className="h-5 w-5" /></Link>
+                        <Link href="https://www.facebook.com/ONGGreenchad/" className="hover:text-green-500 transition-colors"><Instagram className="h-5 w-5" /></Link>
+                        <Link href="https://www.linkedin.com/in/ong-green-chad-a0952431/" className="hover:text-green-500 transition-colors"><Linkedin className="h-5 w-5" /></Link>
                     </div>
                 </div>
 
