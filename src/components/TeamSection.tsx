@@ -74,6 +74,8 @@ const MemberCard = ({ member, index }: { member: TeamMember; index: number }) =>
                         src={member.image}
                         alt={member.name}
                         fill
+                        sizes={member.isCoordinator ? "(max-width: 640px) 90vw, 160px" : "(max-width: 640px) 80vw, (max-width: 1024px) 45vw, 128px"}
+                        loading="lazy"
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
                     />
                 </div>

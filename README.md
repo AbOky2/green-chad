@@ -84,3 +84,15 @@ Si le site [https://www.greenchad.com](https://www.greenchad.com) ne charge pas 
 2. **À faire côté utilisateur** : tester en **4G** vs WiFi, **autre navigateur** ou **navigation privée**, ou **autre réseau** (autre opérateur, partage de connexion).
 
 3. **VPN** : essayer avec un VPN pour voir si le souci disparaît (suggère un blocage ou filtrage local).
+
+### Erreur « Server stopped responding » en 4G (mais OK en WiFi)
+
+Souvent lié au **timeout** : la 4G a plus de latence ou de perte de paquets, et une grosse requête (HTML, JS ou image) dépasse le délai avant que le serveur ait fini de répondre.
+
+**Ce qui a été fait côté site** pour limiter le problème :
+
+- **Polices système** : plus de chargement de polices externes.
+- **Sections en chargement différé** : About, Activités, Équipe, Partenaires, Contact sont chargés en chunks séparés pour réduire le JS initial.
+- **Images optimisées** : `sizes`, `priority` sur le hero/header, `quality={70}` sur le hero, `loading="lazy"` sur les photos d’équipe.
+
+**À faire** : demander à tes amis de tester **https://www.greenchad.com/api/health** en 4G. Si ça répond (`{"ok":true}`) mais pas la page d’accueil, le souci vient du poids de la page ; les optimisations ci‑dessus devraient aider. Si `/api/health` timeout aussi en 4G, c’est un problème plus général (connexion, FAI, routage).

@@ -1,9 +1,11 @@
+import dynamic from "next/dynamic";
 import Hero from "@/components/Hero";
-import About from "@/components/AboutSection";
-import Activities from "@/components/ActivitiesSection";
-import Partners from "@/components/PartnersSection";
-import TeamSection from "@/components/TeamSection";
-import Contact from "@/components/ContactSection";
+
+const About = dynamic(() => import("@/components/AboutSection"), { loading: () => null });
+const Activities = dynamic(() => import("@/components/ActivitiesSection"), { loading: () => null });
+const TeamSection = dynamic(() => import("@/components/TeamSection"), { loading: () => null });
+const Partners = dynamic(() => import("@/components/PartnersSection"), { loading: () => null });
+const Contact = dynamic(() => import("@/components/ContactSection"), { loading: () => null });
 
 export default function Home() {
   return (

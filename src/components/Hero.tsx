@@ -14,9 +14,12 @@ export default function Hero() {
                 {/* Placeholder for Hero Image - ideally a real photo from the NGO */}
                 <div className="relative w-full h-full">
                     <Image
-                        src="/logo.jpg" // Using logo as placeholder pattern or blurred bg if no other image
+                        src="/logo.jpg"
                         alt="Green Tchad Background"
                         fill
+                        sizes="100vw"
+                        priority
+                        quality={70}
                         className="object-cover opacity-20 blur-sm scale-110"
                     />
                     {/* abstract shapes */}

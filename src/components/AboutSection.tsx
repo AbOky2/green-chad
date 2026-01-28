@@ -83,7 +83,7 @@ export default function About() {
                                 <div className="relative z-10 p-6 h-full flex flex-col justify-between">
                                     <div className="flex justify-between items-start">
                                         <div className="p-3 bg-green-500/10 rounded-2xl">
-                                            <Image src="/logo.jpg" alt="Logo" width={40} height={40} className="rounded-full" />
+                                            <Image src="/logo.jpg" alt="Logo" width={40} height={40} sizes="40px" className="rounded-full" />
                                         </div>
                                         <span className="py-1 px-3 bg-green-100/50 border border-green-200/50 rounded-full text-xs font-semibold text-green-700">
                                             Depuis 2023

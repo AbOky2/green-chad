@@ -39,6 +39,8 @@ export default function Header() {
               src="/logo.jpg"
               alt="ONG Green Tchad Logo"
               fill
+              sizes="48px"
+              priority
               className="object-cover"
             />
           </div>
