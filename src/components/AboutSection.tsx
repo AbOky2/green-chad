@@ -44,8 +44,8 @@ export default function About() {
                                 Engagés pour le Tchad de demain
                             </h2>
                             <p className="mt-6 text-slate-600 text-lg leading-relaxed">
-                                L'ONG Green-Chad est née de la volonté de préserver notre patrimoine naturel tout en favorisant le développement socio-économique.
-                                Nous croyons que la protection de l'environnement est indissociable du bien-être des populations.
+                                L&apos;ONG Green-Chad est née de la volonté de préserver notre patrimoine naturel tout en favorisant le développement socio-économique.
+                                Nous croyons que la protection de l&apos;environnement est indissociable du bien-être des populations.
                             </p>
                             <div className="mt-8 space-y-6">
                                 {features.map((feature, idx) => (
