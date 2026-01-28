@@ -6,11 +6,13 @@ const GENERIC_ERROR = 'Erreur lors de l\'envoi du message. Veuillez réessayer p
 
 export async function POST(request: NextRequest) {
   try {
-    // Vérifier les variables d'environnement avant toute chose
-    const emailUser = process.env.EMAIL_USER;
-    const emailAppPassword = process.env.EMAIL_APP_PASSWORD;
-    if (!emailUser?.trim() || !emailAppPassword?.trim()) {
-      console.error('[Contact API] Variables manquantes: EMAIL_USER=', !!emailUser, 'EMAIL_APP_PASSWORD=', !!emailAppPassword);
+    // Vérifier et normaliser les variables d'environnement
+    const rawUser = process.env.EMAIL_USER ?? '';
+    const rawPass = process.env.EMAIL_APP_PASSWORD ?? '';
+    const emailUser = rawUser.trim();
+    const emailAppPassword = rawPass.replaceAll(/\s/g, ''); // Gmail: 16 caractères sans espaces
+    if (!emailUser || !emailAppPassword) {
+      console.error('[Contact API] Variables manquantes: EMAIL_USER=', !!rawUser, 'EMAIL_APP_PASSWORD=', !!rawPass);
       return NextResponse.json(
         { error: GENERIC_ERROR },
         { status: 500 }

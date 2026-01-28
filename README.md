@@ -18,7 +18,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Le site utilise des **polices système** (pas de chargement de polices externes) pour mieux fonctionner sur connexions lentes ou instables (ex. accès depuis le Tchad).
 
 ## Learn More
 
@@ -65,3 +65,22 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
 **Note :** N'oubliez pas de configurer les variables d'environnement dans les paramètres de votre projet Vercel.
+
+## Accès depuis certaines régions (ex. Tchad)
+
+Si le site [https://www.greenchad.com](https://www.greenchad.com) ne charge pas ou ne s’affiche pas correctement depuis certains pays (ex. Tchad), causes possibles :
+
+- **Connexion lente ou instable** : le site timeout avant de charger (réseau mobile, WiFi faible).
+- **DNS** : le domaine ne se résout pas correctement (FAI, DNS locaux).
+- **Blocage ou filtrage** : certains FAI ou réseaux bloquent des domaines ou CDN.
+- **Réseau loin des serveurs** : Vercel sert depuis des edge (ex. Afrique du Sud), la latence depuis le Tchad peut être élevée.
+
+### Diagnostic rapide
+
+1. **Test minimal** : ouvrir **https://www.greenchad.com/api/health**  
+   - Si tu obtiens `{"ok":true}` → le domaine et Vercel répondent ; le blocage vient plutôt de la page d’accueil (JS, images, etc.).
+   - Si ça timeout ou erre → problème de connexion, DNS ou blocage vers le domaine / Vercel.
+
+2. **À faire côté utilisateur** : tester en **4G** vs WiFi, **autre navigateur** ou **navigation privée**, ou **autre réseau** (autre opérateur, partage de connexion).
+
+3. **VPN** : essayer avec un VPN pour voir si le souci disparaît (suggère un blocage ou filtrage local).
