@@ -39,7 +39,15 @@ export default function Contact() {
                 body: JSON.stringify(formData),
             });
 
-            const data = await response.json();
+            let data: { error?: string } = {};
+            const contentType = response.headers.get("content-type");
+            if (contentType?.includes("application/json")) {
+                try {
+                    data = (await response.json()) as { error?: string };
+                } catch {
+                    data = { error: "Réponse invalide" };
+                }
+            }
 
             if (response.ok) {
                 setSubmitStatus("success");
@@ -48,9 +56,10 @@ export default function Contact() {
                 setSubmitStatus("error");
                 setErrorMessage(data.error || "Une erreur est survenue");
             }
-        } catch (error) {
+        } catch (err) {
             setSubmitStatus("error");
             setErrorMessage("Erreur de connexion. Veuillez réessayer plus tard.");
+            if (typeof console !== "undefined") console.error("[Contact] Erreur fetch:", err);
         } finally {
             setIsSubmitting(false);
         }

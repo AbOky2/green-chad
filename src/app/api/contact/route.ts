@@ -1,10 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
+const RECEIVER_EMAIL = 'greenchad2010@gmail.com';
+const GENERIC_ERROR = 'Erreur lors de l\'envoi du message. Veuillez réessayer plus tard.';
+
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { name, email, subject, message } = body;
+    // Vérifier les variables d'environnement avant toute chose
+    const emailUser = process.env.EMAIL_USER;
+    const emailAppPassword = process.env.EMAIL_APP_PASSWORD;
+    if (!emailUser?.trim() || !emailAppPassword?.trim()) {
+      console.error('[Contact API] Variables manquantes: EMAIL_USER=', !!emailUser, 'EMAIL_APP_PASSWORD=', !!emailAppPassword);
+      return NextResponse.json(
+        { error: GENERIC_ERROR },
+        { status: 500 }
+      );
+    }
+
+    let body: Record<string, unknown>;
+    try {
+      body = (await request.json()) as Record<string, unknown>;
+    } catch {
+      return NextResponse.json(
+        { error: 'Requête invalide' },
+        { status: 400 }
+      );
+    }
+
+    const { name, email, subject, message } = body as { name?: string; email?: string; subject?: string; message?: string };
 
     // Validation
     if (!name || !email || !subject || !message) {
@@ -15,22 +38,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Configuration du transporteur email
-    // Utilisez les variables d'environnement pour la sécurité
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.EMAIL_USER, // Votre adresse Gmail
-        pass: process.env.EMAIL_APP_PASSWORD, // Mot de passe d'application Gmail
+        user: emailUser,
+        pass: emailAppPassword,
       },
     });
 
-    // Email de réception des formulaires (onglet Contact)
-    const receiverEmail = 'greenchad2010@gmail.com';
-
-    // Configuration de l'email
     const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: receiverEmail,
+      from: emailUser,
+      to: RECEIVER_EMAIL,
       replyTo: email, // Permet de répondre directement à l'utilisateur
       subject: `[Formulaire Contact] ${subject}`,
       html: `
@@ -75,9 +93,9 @@ ${message}
       { status: 200 }
     );
   } catch (error) {
-    console.error('Erreur lors de l\'envoi de l\'email:', error);
+    console.error('[Contact API] Erreur envoi email:', error);
     return NextResponse.json(
-      { error: 'Erreur lors de l\'envoi du message. Veuillez réessayer plus tard.' },
+      { error: GENERIC_ERROR },
       { status: 500 }
     );
   }

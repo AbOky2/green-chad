@@ -50,6 +50,14 @@ Les messages du formulaire de contact sont toujours envoyés à **greenchad2010@
 
 **Important :** Ne partagez jamais votre mot de passe d'application et ne le commitez pas dans Git.
 
+### Erreur 500 sur le formulaire de contact
+
+Si tu obtiens une erreur 500 (en local ou en prod) :
+
+- **En local** : vérifie que `.env.local` existe à la racine du projet, qu’il contient `EMAIL_USER` et `EMAIL_APP_PASSWORD`, et que tu as redémarré le serveur (`npm run dev`) après les avoir ajoutées.
+- **Sur Vercel** : va dans **Settings** → **Environment Variables**, ajoute `EMAIL_USER` et `EMAIL_APP_PASSWORD` pour **Production** (et **Preview** si tu veux), puis **Redeploy** le projet.
+- Consulte les logs : en local dans le terminal, sur Vercel dans **Deployments** → ton déploiement → **Functions** / logs. Si tu vois `[Contact API] Variables manquantes` ou `[Contact API] Erreur envoi email`, c’est bien un souci de config ou de Gmail.
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
