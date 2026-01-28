@@ -60,10 +60,10 @@ export default function Activities() {
                     {activities.map((activity, idx) => (
                         <motion.div
                             key={idx}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: idx * 0.1, duration: 0.5 }}
+                            initial={{ y: 24 }}
+                            whileInView={{ y: 0 }}
+                            viewport={{ once: true, amount: 0.15 }}
+                            transition={{ delay: idx * 0.06, duration: 0.4 }}
                             className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all hover:translate-y-[-5px] border border-slate-100 group"
                         >
                             <div className="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center text-green-600 mb-6 group-hover:bg-green-600 group-hover:text-white transition-colors">
