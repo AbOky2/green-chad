@@ -19,7 +19,7 @@ type Args = {
 const configPromise = Promise.resolve(config)
 
 export const generateMetadata = ({ params, searchParams }: Args): Promise<Metadata> =>
-  generatePageMetadata({ config: configPromise, importMap, params, searchParams })
+  generatePageMetadata({ config: configPromise, params, searchParams })
 
 const Page = ({ params, searchParams }: Args) =>
   RootPage({ config: configPromise, importMap, params, searchParams })
