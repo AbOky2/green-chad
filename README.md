@@ -50,6 +50,69 @@ Les messages du formulaire de contact sont toujours envoyés à **greenchad2010@
 
 **Important :** Ne partagez jamais votre mot de passe d'application et ne le commitez pas dans Git.
 
+## Configuration Payload CMS (Blog & Articles)
+
+Le site intègre **Payload CMS** pour permettre aux membres de l'équipe de publier des articles et actualités.
+
+### 1. Base de données (Neon PostgreSQL - gratuit)
+
+1. Créez un compte sur **[Neon](https://neon.tech)** (gratuit, 512MB)
+2. Créez un nouveau projet
+3. Copiez la **Connection String** (format `postgresql://user:password@host/database`)
+4. Ajoutez-la dans `.env.local` :
+
+```env
+DATABASE_URL=postgresql://user:password@ep-xxx.region.aws.neon.tech/neondb?sslmode=require
+```
+
+### 2. Secret Payload
+
+Générez une clé secrète aléatoire pour Payload :
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+Ajoutez-la dans `.env.local` :
+
+```env
+PAYLOAD_SECRET=votre_cle_secrete_generee_ici
+NEXT_PUBLIC_SERVER_URL=http://localhost:3000
+```
+
+### 3. Initialiser la base de données
+
+Première exécution : Payload créera automatiquement les tables nécessaires au premier démarrage.
+
+```bash
+npm run dev
+```
+
+### 4. Créer le premier utilisateur admin
+
+1. Ouvrez **http://localhost:3000/admin**
+2. Remplissez le formulaire de création du premier utilisateur :
+   - **Email** : votre email
+   - **Password** : mot de passe sécurisé
+   - **Name** : votre nom
+   - **Role** : Admin
+3. Vous pouvez maintenant vous connecter et créer des articles !
+
+### 5. Accès au CMS
+
+- **Admin local** : http://localhost:3000/admin
+- **Admin prod** : https://www.greenchad.com/admin
+
+### 6. Déploiement sur Vercel
+
+Dans **Vercel** → **Settings** → **Environment Variables**, ajoutez :
+
+- `DATABASE_URL` : votre URL PostgreSQL Neon
+- `PAYLOAD_SECRET` : votre clé secrète
+- `NEXT_PUBLIC_SERVER_URL` : https://www.greenchad.com
+
+**Redéployez** après avoir ajouté ces variables.
+
 ### Erreur 500 sur le formulaire de contact
 
 Si tu obtiens une erreur 500 (en local ou en prod) :

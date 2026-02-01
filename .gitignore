@@ -22,6 +22,9 @@
 
 # misc
 .DS_Store
+.agents
+.cursor
+.github
 *.pem
 
 # debug
@@ -39,3 +42,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Payload CMS
+/public/uploads
+payload-types.ts
+.payload

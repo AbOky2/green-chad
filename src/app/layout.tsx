@@ -1,42 +1,30 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import config from '@payload-config'
+import '@payloadcms/next/css'
+import type { ServerFunctionClient } from 'payload'
+import { handleServerFunctions, RootLayout } from '@payloadcms/next/layouts'
 
-export const metadata: Metadata = {
-  title: "ONG Green-Chad - Pour un développement durable",
-  description: "Mission : Outiller les citoyens tchadiens pour leur permettre de relever efficacement le défi du développement durable.",
-  icons: {
-    icon: "/logo.jpg",
-    apple: "/logo.jpg",
-  },
-  openGraph: {
-    title: "ONG Green-Chad - Pour un développement durable",
-    description: "Mission : Outiller les citoyens tchadiens pour leur permettre de relever efficacement le défi du développement durable.",
-    images: ["/logo.jpg"],
-  },
-  twitter: {
-    card: "summary",
-    title: "ONG Green-Chad - Pour un développement durable",
-    description: "Mission : Outiller les citoyens tchadiens pour leur permettre de relever efficacement le défi du développement durable.",
-    images: ["/logo.jpg"],
-  },
-};
+import { importMap } from './(payload)/admin/importMap.js'
+import './(payload)/custom.scss'
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+type Args = {
+  children: React.ReactNode
+}
+
+const configPromise = Promise.resolve(config)
+
+const serverFunction: ServerFunctionClient = async function (args) {
+  'use server'
+  return handleServerFunctions({
+    ...args,
+    config,
+    importMap,
+  })
+}
+
+export default function RootLayoutWrapper({ children }: Readonly<Args>) {
   return (
-    <html lang="fr" className="scroll-smooth">
-      <body>
-        <Header />
-        <main className="min-h-screen">
-          {children}
-        </main>
-        <Footer />
-      </body>
-    </html>
-  );
+    <RootLayout config={configPromise} importMap={importMap} serverFunction={serverFunction}>
+      {children}
+    </RootLayout>
+  )
 }
