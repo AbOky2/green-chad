@@ -3,15 +3,20 @@ import type { CollectionConfig } from 'payload'
 export const Media: CollectionConfig = {
   slug: 'media',
   labels: {
-    singular: 'Média',
-    plural: 'Médias',
+    singular: { fr: 'Média' },
+    plural: { fr: 'Médias' },
   },
   admin: {
-    group: 'Contenu',
-    description: 'Images et fichiers uploadés',
+    group: { fr: 'Contenu' },
+    description: { fr: 'Images et fichiers uploadés' },
+  },
+  access: {
+    read: () => true,
   },
   upload: {
     staticDir: 'public/uploads',
+    // @ts-ignore
+    staticURL: '/uploads',
     imageSizes: [
       {
         name: 'thumbnail',

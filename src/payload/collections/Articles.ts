@@ -3,14 +3,14 @@ import type { CollectionConfig } from 'payload'
 export const Articles: CollectionConfig = {
   slug: 'articles',
   labels: {
-    singular: 'Article',
-    plural: 'Articles',
+    singular: { fr: 'Article' },
+    plural: { fr: 'Articles' },
   },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'author', 'publishedAt', 'status'],
-    group: 'Contenu',
-    description: 'Gérez les articles et actualités du blog',
+    defaultColumns: ['title', 'category', 'publishedAt', 'status'],
+    group: { fr: 'Contenu' },
+    description: { fr: 'Gérez les articles et actualités du blog' },
   },
   access: {
     read: ({ req: { user } }) => {

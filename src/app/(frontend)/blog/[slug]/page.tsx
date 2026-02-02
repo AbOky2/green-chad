@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Calendar, User, ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
+import { RichText } from "@/components/RichText";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -52,16 +53,25 @@ export default async function ArticlePage({ params }: Props) {
     notFound();
   }
 
+  /* Helper to fix image URLs from Payload */
+  const getImageUrl = (media: any) => {
+    if (!media?.url) return "/logo.jpg";
+    if (media.url.startsWith('/api/media/file')) {
+      return media.url.replace('/api/media/file', '/uploads');
+    }
+    return media.url;
+  };
+
   return (
     <div className="min-h-screen bg-white">
-      <div className="relative h-[50vh] min-h-[400px] w-full overflow-hidden">
+      <div className="relative h-[50vh] min-h-[400px] w-full overflow-hidden bg-slate-900">
         <Image
-          src={article.featuredImage?.url || "/logo.jpg"}
+          src={getImageUrl(article.featuredImage)}
           alt={article.featuredImage?.alt || article.title}
           fill
           priority
           sizes="100vw"
-          className="object-cover"
+          className="object-contain"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-8 lg:p-16 text-white">
@@ -77,11 +87,12 @@ export default async function ArticlePage({ params }: Props) {
             <div className="flex items-center gap-6 text-sm">
               <span className="flex items-center gap-2">
                 <User className="h-4 w-4" />
+                {/* @ts-ignore */}
                 {article.author?.name || "Anonyme"}
               </span>
               <span className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
-                {new Date(article.publishedAt).toLocaleDateString("fr-FR", {
+                {new Date(article.publishedAt || article.createdAt).toLocaleDateString("fr-FR", {
                   day: "numeric",
                   month: "long",
                   year: "numeric",
@@ -95,8 +106,9 @@ export default async function ArticlePage({ params }: Props) {
       <div className="container-custom max-w-4xl py-16">
         <div
           className="prose prose-lg prose-slate max-w-none"
-          dangerouslySetInnerHTML={{ __html: article.content }}
-        />
+        >
+          <RichText content={article.content} />
+        </div>
       </div>
 
       <div className="bg-slate-50 py-12">

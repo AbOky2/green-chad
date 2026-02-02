@@ -1,4 +1,5 @@
 import config from '@payload-config'
+export const dynamic = 'force-dynamic'
 import {
   REST_DELETE,
   REST_GET,

@@ -19,7 +19,7 @@ const categoryColors: Record<string, string> = {
 
 async function getArticles() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/articles?where[status][equals]=published&sort=-publishedAt&limit=100`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/articles?where[status][equals]=published&sort=-publishedAt&limit=100&depth=2`, {
       next: { revalidate: 60 },
     });
 
@@ -33,6 +33,15 @@ async function getArticles() {
 
 export default async function BlogPage() {
   const articles = await getArticles();
+
+  /* Helper to fix image URLs from Payload */
+  const getImageUrl = (media: any) => {
+    if (!media?.url) return "/logo.jpg";
+    if (media.url.startsWith('/api/media/file')) {
+      return media.url.replace('/api/media/file', '/uploads');
+    }
+    return media.url;
+  };
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -60,16 +69,15 @@ export default async function BlogPage() {
                 <Link href={`/blog/${article.slug}`}>
                   <div className="relative h-48 overflow-hidden">
                     <Image
-                      src={article.featuredImage?.url || "/logo.jpg"}
+                      src={getImageUrl(article.featuredImage)}
                       alt={article.featuredImage?.alt || article.title}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-110"
                     />
                     <span
-                      className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold ${
-                        categoryColors[article.category] || "bg-slate-100 text-slate-700"
-                      }`}
+                      className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold ${categoryColors[article.category] || "bg-slate-100 text-slate-700"
+                        }`}
                     >
                       {article.category}
                     </span>
@@ -82,11 +90,12 @@ export default async function BlogPage() {
                     <div className="flex items-center gap-4 text-xs text-slate-500">
                       <span className="flex items-center gap-1">
                         <User className="h-3 w-3" />
+                        {/* @ts-ignore */}
                         {article.author?.name || "Anonyme"}
                       </span>
                       <span className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
-                        {new Date(article.publishedAt).toLocaleDateString("fr-FR")}
+                        {new Date(article.publishedAt || article.createdAt).toLocaleDateString("fr-FR")}
                       </span>
                     </div>
                   </div>
@@ -96,6 +105,6 @@ export default async function BlogPage() {
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 }

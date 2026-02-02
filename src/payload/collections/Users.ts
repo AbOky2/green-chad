@@ -3,13 +3,16 @@ import type { CollectionConfig } from 'payload'
 export const Users: CollectionConfig = {
   slug: 'users',
   labels: {
-    singular: 'Utilisateur',
-    plural: 'Utilisateurs',
+    singular: { fr: 'Utilisateur' },
+    plural: { fr: 'Utilisateurs' },
   },
   admin: {
     useAsTitle: 'name',
-    group: 'Administration',
-    description: 'Gérez les comptes des membres de l\'équipe',
+    group: { fr: 'Administration' },
+    description: { fr: 'Gérez les comptes des membres de l\'équipe' },
+  },
+  access: {
+    read: () => true,
   },
   auth: true,
   fields: [
