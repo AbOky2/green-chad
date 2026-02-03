@@ -2,6 +2,7 @@ import { buildConfig } from 'payload'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { seoPlugin } from '@payloadcms/plugin-seo'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -12,6 +13,12 @@ import { Media } from './src/payload/collections/Media'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+// @ts-ignore
+const getValue = (field) => {
+  if (typeof field === 'string') return field
+  return field?.value || ''
+}
 
 export default buildConfig({
   admin: {
@@ -41,8 +48,15 @@ export default buildConfig({
     seoPlugin({
       collections: ['articles'],
       uploadsCollection: 'media',
-      generateTitle: ({ doc }) => `Green-Chad - ${typeof doc.title === 'string' ? doc.title : (doc.title as { value?: string })?.value || ''}`,
-      generateDescription: ({ doc }) => (typeof doc.excerpt === 'string' ? doc.excerpt : (doc.excerpt as { value?: string })?.value) || '',
+      generateTitle: ({ doc }) => `Green-Chad - ${getValue(doc.title)}`,
+      generateDescription: ({ doc }) => getValue(doc.excerpt),
+    }),
+    vercelBlobStorage({
+      enabled: true,
+      collections: {
+        media: true,
+      },
+      token: process.env.BLOB_READ_WRITE_TOKEN,
     }),
   ],
   defaultDepth: 2,

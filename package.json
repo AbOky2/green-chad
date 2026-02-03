@@ -16,6 +16,7 @@
     "@payloadcms/plugin-cloud-storage": "^3.74.0",
     "@payloadcms/plugin-seo": "^3.74.0",
     "@payloadcms/richtext-lexical": "^3.74.0",
+    "@payloadcms/storage-vercel-blob": "^3.74.0",
     "@types/nodemailer": "^7.0.5",
     "framer-motion": "^12.26.2",
     "lucide-react": "^0.562.0",
