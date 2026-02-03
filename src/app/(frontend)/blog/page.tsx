@@ -34,15 +34,6 @@ async function getArticles() {
 export default async function BlogPage() {
   const articles = await getArticles();
 
-  /* Helper to fix image URLs from Payload */
-  const getImageUrl = (media: any) => {
-    if (!media?.url) return "/logo.jpg";
-    if (media.url.startsWith('/api/media/file')) {
-      return media.url.replace('/api/media/file', '/uploads');
-    }
-    return media.url;
-  };
-
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="bg-gradient-to-r from-green-700 to-green-900 text-white py-20">
@@ -69,7 +60,7 @@ export default async function BlogPage() {
                 <Link href={`/blog/${article.slug}`}>
                   <div className="relative h-48 overflow-hidden">
                     <Image
-                      src={getImageUrl(article.featuredImage)}
+                      src={article.featuredImage?.url || "/logo.jpg"}
                       alt={article.featuredImage?.alt || article.title}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"

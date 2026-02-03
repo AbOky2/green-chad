@@ -14,9 +14,6 @@ export const Media: CollectionConfig = {
     read: () => true,
   },
   upload: {
-    staticDir: 'public/uploads',
-    // @ts-ignore
-    staticURL: '/uploads',
     imageSizes: [
       {
         name: 'thumbnail',

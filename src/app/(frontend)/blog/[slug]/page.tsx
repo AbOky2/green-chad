@@ -53,20 +53,11 @@ export default async function ArticlePage({ params }: Props) {
     notFound();
   }
 
-  /* Helper to fix image URLs from Payload */
-  const getImageUrl = (media: any) => {
-    if (!media?.url) return "/logo.jpg";
-    if (media.url.startsWith('/api/media/file')) {
-      return media.url.replace('/api/media/file', '/uploads');
-    }
-    return media.url;
-  };
-
   return (
     <div className="min-h-screen bg-white">
       <div className="relative h-[50vh] min-h-[400px] w-full overflow-hidden bg-slate-900">
         <Image
-          src={getImageUrl(article.featuredImage)}
+          src={article.featuredImage?.url || "/logo.jpg"}
           alt={article.featuredImage?.alt || article.title}
           fill
           priority
