@@ -20,7 +20,7 @@ const coordinator: TeamMember = {
 const teamMembers: TeamMember[] = [
     {
         name: "Payang Kana",
-        role: "Secrétaire Général",
+        role: "Chargé de programme",
         image: "/membre2.jpg",
     },
     {
@@ -30,7 +30,7 @@ const teamMembers: TeamMember[] = [
     },
     {
         name: "Fahad Azarak",
-        role: "Chargé de Programme",
+        role: "Chargé des partenariats",
         image: "/membre1.jpg",
     },
     {
@@ -53,6 +53,11 @@ const teamMembers: TeamMember[] = [
         role: "Chargé des Agents de Terrain",
         image: "/membre6.jpg",
     },
+    {
+        name: "Abdelkerim Abbas Abdelkerim",
+        role: "Responsable Logistique",
+        image: "/membreNew.jpg",
+    }
 ];
 
 const viewport = { once: true, amount: 0.15 } as const;
@@ -81,7 +86,8 @@ const MemberCard = ({ member, index }: { member: TeamMember; index: number }) =>
                 </div>
             </div>
 
-            <div className="text-center">
+            <div className="text-center mt-12">
+
                 <h3 className={`font-bold text-gray-900 ${member.isCoordinator ? 'text-xl mb-1' : 'text-lg'}`}>
                     {member.name}
                 </h3>
@@ -110,7 +116,7 @@ export default function TeamSection() {
                     </h2>
                     <div className="w-20 h-1 bg-green-500 mx-auto rounded-full mb-6" />
                     <p className="text-gray-600 text-lg">
-                        Des passionnés engagés pour la préservation de l'environnement et le développement durable au Tchad.
+                        Des passionnés engagés pour la préservation de l&apos;environnement et le développement durable au Tchad.
                     </p>
                 </motion.div>
 

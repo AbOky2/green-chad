@@ -78,7 +78,6 @@ export default async function ArticlePage({ params }: Props) {
             <div className="flex items-center gap-6 text-sm">
               <span className="flex items-center gap-2">
                 <User className="h-4 w-4" />
-                {/* @ts-ignore */}
                 {article.author?.name || "Anonyme"}
               </span>
               <span className="flex items-center gap-2">

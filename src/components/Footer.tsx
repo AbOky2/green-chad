@@ -40,10 +40,15 @@ export default function Footer() {
                 {/* Contact */}
                 <div>
                     <h4 className="text-lg font-semibold text-white mb-6">Contactez-nous</h4>
+                    <p className="text-slate-400 text-sm">
+                        L&apos;ONG Green-Chad s&apos;engage pour un développement durable et inclusif au Tchad.
+                    </p>
                     <ul className="space-y-4">
-                        <li className="flex items-start gap-3">
-                            <MapPin className="h-5 w-5 text-green-500 shrink-0 mt-1" />
-                            <span>N'Djamena, Tchad</span>
+                        <li>
+                            <div className="flex items-start gap-3 text-slate-400 text-sm group cursor-pointer">
+                                <MapPin className="h-5 w-5 text-green-500 shrink-0 mt-0.5 group-hover:text-green-400 transition-colors" />
+                                <span>N&apos;Djamena, Tchad - Quartier Sabangali</span>
+                            </div>
                         </li>
                         <li className="flex items-center gap-3">
                             <Mail className="h-5 w-5 text-green-500 shrink-0" />
@@ -70,7 +75,7 @@ export default function Footer() {
                             className="bg-slate-800 border-none rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:ring-2 focus:ring-green-500 outline-none"
                         />
                         <button className="bg-green-600 text-white rounded-lg px-4 py-2 font-medium hover:bg-green-700 transition-colors">
-                            S'abonner
+                            S&apos;abonner
                         </button>
                     </form>
                 </div>

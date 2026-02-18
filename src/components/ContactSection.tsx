@@ -80,7 +80,7 @@ export default function Contact() {
                             Prêt à rejoindre le mouvement ?
                         </h2>
                         <p className="mt-4 text-slate-600 text-lg leading-relaxed mb-10">
-                            Que ce soit pour un partenariat, un don ou simplement pour en savoir plus, notre équipe est à votre écoute.
+                            N&apos;hésitez pas à nous contacter également par téléphone ou à nous rendre visite à nos bureaux.
                         </p>
 
                         <div className="space-y-8">
@@ -90,7 +90,7 @@ export default function Contact() {
                                 </div>
                                 <div>
                                     <h4 className="text-lg font-bold text-slate-900">Notre Adresse</h4>
-                                    <p className="text-slate-600">Quartier Repos 2, N'Djamena, Tchad</p>
+                                    <p className="text-slate-600">Quartier Repos 2, N&apos;Djamena, Tchad</p>
                                 </div>
                             </div>
 
@@ -124,7 +124,7 @@ export default function Contact() {
                     {/* Form */}
                     <div className="bg-white rounded-2xl shadow-xl p-8 lg:p-10">
                         <h3 className="text-2xl font-bold text-slate-900 mb-6">Envoyez-nous un message</h3>
-                        
+
                         {/* Message de succès */}
                         {submitStatus === "success" && (
                             <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3">

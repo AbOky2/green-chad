@@ -14,7 +14,7 @@ import { Media } from './src/payload/collections/Media'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-// @ts-ignore
+// @ts-expect-error Types are sometimes loose in Payload config helpers
 const getValue = (field) => {
   if (typeof field === 'string') return field
   return field?.value || ''

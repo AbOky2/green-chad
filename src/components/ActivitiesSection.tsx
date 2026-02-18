@@ -51,7 +51,7 @@ export default function Activities() {
         <section id="activities" className="section-padding bg-slate-50 relative">
             <div className="container-custom">
                 <div className="text-center max-w-2xl mx-auto mb-16">
-                    <span className="text-green-600 font-semibold tracking-wider text-sm uppercase">Nos Domaines d'Intervention</span>
+                    <span className="text-green-600 font-semibold tracking-wider text-sm uppercase">Nos Domaines d&apos;Intervention</span>
                     <h2 className="text-3xl lg:text-5xl font-bold mt-2 text-slate-900">Des actions concrètes pour un impact réel</h2>
                     <p className="mt-4 text-slate-600">Nous intervenons sur plusieurs fronts pour assurer un développement holistique et durable.</p>
                 </div>

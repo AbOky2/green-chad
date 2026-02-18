@@ -29,9 +29,13 @@ const categoryConfig: Record<string, { label: string; color: string }> = {
   environnement: { label: "Environnement", color: "bg-green-100 text-green-700" },
   education: { label: "Éducation", color: "bg-blue-100 text-blue-700" },
   sante: { label: "Santé", color: "bg-red-100 text-red-700" },
-  agriculture: { label: "Agriculture", color: "bg-amber-100 text-amber-700" },
+  eauHygieneAssainissement: { label: "L'eau, l’hygiène et l'assainissement", color: "bg-amber-100 text-amber-700" },
   actualites: { label: "Actualités", color: "bg-purple-100 text-purple-700" },
   evenements: { label: "Événements", color: "bg-pink-100 text-pink-700" },
+  securiteAlimentaire: { label: "Sécurité alimentaire", color: "bg-yellow-100 text-yellow-700" },
+  formation: { label: "Formation technique et professionnelle", color: "bg-orange-100 text-orange-700" },
+  violence: { label: "Violence basée sur le genre", color: "bg-red-100 text-red-700" },
+  paix: { label: "La paix", color: "bg-green-100 text-green-700" },
 };
 
 export default function BlogSection({ articles }: BlogSectionProps) {
@@ -80,9 +84,8 @@ export default function BlogSection({ articles }: BlogSectionProps) {
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   <span
-                    className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold ${
-                      categoryConfig[article.category]?.color || "bg-slate-100 text-slate-700"
-                    }`}
+                    className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold ${categoryConfig[article.category]?.color || "bg-slate-100 text-slate-700"
+                      }`}
                   >
                     {categoryConfig[article.category]?.label || article.category}
                   </span>
