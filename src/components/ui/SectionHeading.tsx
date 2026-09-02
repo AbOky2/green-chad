@@ -1,18 +1,22 @@
 type Props = {
+  number: string
   eyebrow: string
-  title: string
-  description?: string
-  align?: 'center' | 'left'
+  title?: string
+  children?: React.ReactNode
   className?: string
 }
 
-export default function SectionHeading({ eyebrow, title, description, align = 'center', className = '' }: Props) {
-  const centered = align === 'center'
+/** En-tête de section : filet pleine largeur, numéro + eyebrow en terre, titre serif. */
+export default function SectionHeading({ number, eyebrow, title, children, className = '' }: Props) {
   return (
-    <div className={`reveal ${centered ? 'mx-auto max-w-2xl text-center' : 'max-w-2xl'} ${className}`}>
-      <span className={`eyebrow ${centered ? 'justify-center' : ''}`}>{eyebrow}</span>
-      <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl">{title}</h2>
-      {description && <p className="mt-4 text-lg leading-relaxed text-ink-soft">{description}</p>}
+    <div className={`rule pt-5 ${className}`}>
+      <p className="t-label flex items-center gap-3 text-terre">
+        <span className="index-number text-base">{number}</span>
+        <span aria-hidden className="h-px w-6 bg-terre/60" />
+        {eyebrow}
+      </p>
+      {title && <h2 className="t-h2 mt-6 max-w-3xl">{title}</h2>}
+      {children}
     </div>
   )
 }

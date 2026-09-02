@@ -4,7 +4,7 @@ import SectionHeading from '@/components/ui/SectionHeading'
 
 type Member = { name: string; role: string; image: string }
 
-const coordinator: Member = { name: 'Abdallah Soumaine', role: 'Coordinateur National', image: '/coordo.jpg' }
+const coordinator: Member = { name: 'Abdallah Soumaine', role: 'Coordinateur national', image: '/coordo.jpg' }
 
 const members: Member[] = [
   { name: 'Payang Kana', role: 'Chargé de programme', image: '/membre2.jpg' },
@@ -17,48 +17,49 @@ const members: Member[] = [
   { name: 'Abdelkerim Abbas Abdelkerim', role: 'Responsable logistique', image: '/membreNew.jpg' },
 ]
 
-function MemberCard({ member, lead = false, index = 0 }: { member: Member; lead?: boolean; index?: number }) {
+function Portrait({ member, size }: { member: Member; size: number }) {
   return (
-    <li
-      className={`reveal card card-hover flex flex-col items-center p-6 text-center ${lead ? 'border-brand-200 bg-gradient-to-b from-brand-50 to-white sm:px-10' : ''}`}
-      style={{ '--i': index } as React.CSSProperties}
-    >
-      <span className={`relative overflow-hidden rounded-full ring-4 ${lead ? 'h-36 w-36 ring-brand-400' : 'h-28 w-28 ring-paper-2'}`}>
-        <Image
-          src={member.image}
-          alt={`Portrait de ${member.name}`}
-          fill
-          sizes={lead ? '144px' : '112px'}
-          loading="lazy"
-          className="object-cover transition-transform duration-500 hover:scale-105"
-        />
-      </span>
-      <h3 className={`mt-5 font-bold ${lead ? 'text-xl' : 'text-base'}`}>{member.name}</h3>
-      <p className={`mt-1 text-sm ${lead ? 'font-semibold text-brand-700' : 'text-muted'}`}>{member.role}</p>
-    </li>
+    <span className="relative shrink-0 overflow-hidden rounded-full border border-rule" style={{ width: size, height: size }}>
+      <Image
+        src={member.image}
+        alt={`Portrait de ${member.name}`}
+        fill
+        sizes={`${size}px`}
+        loading="lazy"
+        className="portrait object-cover"
+      />
+    </span>
   )
 }
 
 export default function Team() {
   return (
-    <section id="team" className="section bg-white">
-      <div className="container-custom">
-        <SectionHeading
-          eyebrow="Organisation"
-          title="Une équipe engagée"
-          description="Des passionnés mobilisés pour la préservation de l'environnement et le développement durable au Tchad."
-        />
+    <section id="team" className="container-custom section pt-0 lg:pt-0">
+      <SectionHeading number="04" eyebrow="Équipe" title="Des femmes et des hommes engagés sur le terrain" />
 
-        <ul className="mx-auto mt-14 flex max-w-sm justify-center">
-          <MemberCard member={coordinator} lead />
-        </ul>
-
-        <ul className="stagger mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {members.map((member, i) => (
-            <MemberCard key={member.name} member={member} index={i} />
-          ))}
-        </ul>
+      <div className="portrait-hover mt-12 flex items-center gap-6 border-y border-rule py-8 sm:gap-10">
+        <Portrait member={coordinator} size={160} />
+        <div>
+          <p className="t-label text-terre">Coordination</p>
+          <h3 className="t-h3 mt-2">{coordinator.name}</h3>
+          <p className="mt-1 text-graphite">{coordinator.role}</p>
+        </div>
       </div>
+
+      <ul className="grid sm:grid-cols-2 lg:grid-cols-4">
+        {members.map((m, i) => (
+          <li
+            key={m.name}
+            className={`portrait-hover flex flex-col gap-5 border-b border-rule py-8 pr-6 ${i % 4 !== 0 ? 'lg:border-l lg:pl-6' : ''} ${i % 2 !== 0 ? 'sm:border-l sm:pl-6 lg:pl-6' : ''}`}
+          >
+            <Portrait member={m} size={112} />
+            <div>
+              <h3 className="text-lg font-semibold leading-snug">{m.name}</h3>
+              <p className="mt-1 text-sm text-stone">{m.role}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
     </section>
   )
 }

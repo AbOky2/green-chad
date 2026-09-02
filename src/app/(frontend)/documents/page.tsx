@@ -1,13 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { FolderOpen } from 'lucide-react'
 
 import DocumentList from '@/components/documents/DocumentList'
-import PageHero from '@/components/ui/PageHero'
+import PageHeader from '@/components/ui/PageHeader'
 import { getPublicDocuments } from '@/lib/documents'
 
 export const metadata: Metadata = {
-  title: 'Documents',
+  title: 'Documents officiels',
   description:
     "Règlement intérieur, statuts, chartes, rapports et autres documents officiels de l'ONG Green-Chad, en libre téléchargement.",
   alternates: { canonical: '/documents' },
@@ -22,43 +21,37 @@ export default async function DocumentsPage() {
 
   return (
     <>
-      <PageHero
+      <PageHeader
         eyebrow="Ressources"
-        title="Documents officiels"
-        description="Règlement intérieur, statuts, chartes signées, rapports d'activités… Retrouvez ici les documents de l'organisation, en libre consultation."
+        title={<>Documents <em>officiels</em></>}
+        description="Règlement intérieur, statuts, chartes signées, rapports d'activités : les documents de l'organisation, en libre consultation."
       >
         {groups.length > 1 && (
-          <nav aria-label="Catégories de documents" className="relative mt-8 flex flex-wrap gap-2">
-            {groups.map((group) => (
-              <a
-                key={group.category}
-                href={`#${group.category}`}
-                className="chip border border-white/25 bg-white/10 px-4! py-2! text-sm! text-white backdrop-blur transition-colors hover:bg-white/20"
-              >
+          <nav aria-label="Sommaire" className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
+            {groups.map((group, i) => (
+              <a key={group.category} href={`#${group.category}`} className="t-label flex items-center gap-2 text-stone transition-colors hover:text-ink">
+                <span className="index-number text-base">{String(i + 1).padStart(2, '0')}</span>
                 {group.label}
-                <span className="ml-2 rounded-full bg-white/20 px-1.5 text-xs">{group.documents.length}</span>
+                <span>({group.documents.length})</span>
               </a>
             ))}
           </nav>
         )}
-      </PageHero>
+      </PageHeader>
 
-      <div className="container-custom max-w-5xl py-12 sm:py-16">
+      <div className="container-custom py-12 lg:py-20">
         {total === 0 ? (
-          <div className="card mx-auto max-w-lg p-10 text-center">
-            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
-              <FolderOpen className="h-6 w-6" />
-            </span>
-            <h2 className="mt-5 text-xl font-bold">Aucun document publié pour le moment</h2>
-            <p className="mt-2 text-ink-soft">Les documents officiels de l&apos;organisation seront bientôt disponibles ici.</p>
+          <div className="border-y border-rule py-20 text-center">
+            <p className="t-h3">Aucun document publié pour le moment</p>
+            <p className="mt-3 text-graphite">Les documents officiels de l&apos;organisation seront bientôt disponibles ici.</p>
           </div>
         ) : (
           <DocumentList groups={groups} />
         )}
 
-        <p className="mt-16 rounded-2xl border border-dashed border-line bg-paper-2/60 p-5 text-center text-sm text-muted">
-          Vous êtes membre de l&apos;organisation ?{' '}
-          <Link href="/admin/collections/documents" className="link-underline font-medium text-brand-700">
+        <p className="mt-20 border-t border-rule pt-6 text-sm text-stone">
+          Membre de l&apos;organisation ?{' '}
+          <Link href="/admin/collections/documents" className="link-quiet text-ink">
             Déposez un document depuis l&apos;espace membres
           </Link>
           .

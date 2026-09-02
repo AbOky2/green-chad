@@ -18,7 +18,18 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-Le site utilise des **polices système** (pas de chargement de polices externes) pour mieux fonctionner sur connexions lentes ou instables (ex. accès depuis le Tchad).
+## Design
+
+La direction artistique est décrite dans **[`docs/DESIGN_BRIEF.md`](docs/DESIGN_BRIEF.md)** (couleurs, typographie, grille, composants, interdits). Toute évolution visuelle doit s'y conformer.
+
+- Titrage en **Instrument Serif** (auto-hébergée dans `src/fonts`, sous-ensemble latin, ≈ 43 Ko, licence OFL) ; texte courant en polices système. Aucune police externe n'est chargée au runtime.
+- Palette monochrome chaude (papier / encre), accents rares : terre (`#B8461F`) pour les repères, mousse (`#2F6B3F`) pour le bouton principal et le logo.
+- Aucun dégradé, aucune ombre, aucune icône décorative : filets de 1 px, numéros de section, chiffres en serif.
+- Animations en CSS uniquement (apparition du hero, défilement des logos partenaires), désactivées avec `prefers-reduced-motion`.
+
+### Partenaires
+
+Les logos sont dans `public/partners/` (PNG, hauteur 240 px) et la liste dans `src/lib/partners.ts`. Pour ajouter un partenaire : déposer le logo, puis ajouter une entrée (nom, description, image, dimensions).
 
 ## Scripts utiles
 
@@ -41,8 +52,9 @@ Le site utilise des **polices système** (pas de chargement de polices externes)
 
 - Les pages lisent la base **directement via l'API locale Payload** (plus d'appel HTTP du serveur vers lui-même) et sont mises en cache ; le cache est invalidé automatiquement à chaque publication dans l'admin.
 - Les fichiers (images, documents) sont servis **directement par le CDN Vercel Blob**.
-- Aucune bibliothèque d'animation : transitions en CSS natif, JavaScript client réduit au strict minimum (menu mobile, formulaire de contact).
-- Images converties en WebP et redimensionnées à l'envoi.
+- Aucune bibliothèque d'animation ni d'icônes : transitions en CSS natif, JavaScript client réduit au strict minimum (menu mobile, formulaire de contact).
+- Images converties en WebP et redimensionnées à l'envoi ; favicon dédié de 6 Ko (`src/app/icon.png`).
+- Mesures Lighthouse mobile (build de production, septembre 2026) : performance 95–99, accessibilité 100, bonnes pratiques 100, SEO 100, CLS 0.
 
 ## Learn More
 

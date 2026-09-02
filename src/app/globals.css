@@ -1,71 +1,62 @@
 @import "tailwindcss";
 
-/* ---------- Thème Green-Chad ---------- */
+/* =========================================================
+   Green-Chad — système « éditorial institutionnel »
+   Voir docs/DESIGN_BRIEF.md pour les règles.
+   ========================================================= */
 @theme {
-  --color-brand-50: #f1f9f2;
-  --color-brand-100: #ddf2e0;
-  --color-brand-200: #bde5c4;
-  --color-brand-300: #8dd19c;
-  --color-brand-400: #57b56d;
-  --color-brand-500: #319a4a;
-  --color-brand-600: #227c3a;
-  --color-brand-700: #1c6330;
-  --color-brand-800: #194f29;
-  --color-brand-900: #154123;
-  --color-brand-950: #0a2413;
+  --color-paper: #f5f2eb;
+  --color-paper-2: #ece8df;
+  --color-ink: #151515;
+  --color-graphite: #4b4a46;
+  --color-stone: #6b6860; /* ≥ 4,5:1 sur papier, y compris en 12 px */
+  --color-rule: #d6d1c4;
+  --color-terre: #b8461f;
+  --color-moss: #2f6b3f;
+  --color-ocre: #d9a441;
 
-  --color-sun-400: #fbbf24;
-  --color-sun-500: #f59e0b;
+  --font-sans: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: var(--font-instrument), "Iowan Old Style", "Palatino Linotype", Georgia, serif;
 
-  --color-ink: #11201a;
-  --color-ink-soft: #3f524a;
-  --color-muted: #6b7f75;
-  --color-paper: #f7f8f4;
-  --color-paper-2: #eef3ec;
-  --color-line: #dfe7e0;
-
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-
-  --shadow-soft: 0 1px 2px rgb(17 32 26 / 0.04), 0 8px 24px -12px rgb(17 32 26 / 0.18);
-  --shadow-lift: 0 2px 4px rgb(17 32 26 / 0.05), 0 20px 40px -20px rgb(17 32 26 / 0.3);
-
-  --radius-xl2: 1.25rem;
+  --tracking-label: 0.14em;
 }
 
 /* ---------- Base ---------- */
 @layer base {
   html {
-    scroll-behavior: smooth;
-    scroll-padding-top: 5.5rem;
+    scroll-padding-top: 5rem;
   }
 
   body {
     @apply bg-paper text-ink antialiased;
     font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.65;
     text-rendering: optimizeLegibility;
+    font-feature-settings: "kern", "liga";
   }
 
-  h1, h2, h3, h4 {
-    @apply font-bold tracking-tight text-balance;
+  h1, h2, h3, .serif {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    text-wrap: balance;
   }
 
-  p {
-    @apply text-pretty;
-  }
+  p { text-wrap: pretty; }
+
+  em { font-style: italic; }
 
   ::selection {
-    background: var(--color-brand-200);
-    color: var(--color-ink);
+    background: var(--color-ink);
+    color: var(--color-paper);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-brand-500);
+    outline: 2px solid var(--color-terre);
     outline-offset: 3px;
-    border-radius: 4px;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
@@ -74,140 +65,218 @@
   }
 }
 
-/* ---------- Composants (déclarés en @utility pour pouvoir être combinés via @apply) ---------- */
+/* ---------- Typographie ---------- */
+@utility t-display {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.75rem, 1.5rem + 5vw, 5.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+
+@utility t-h1 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.375rem, 1.5rem + 3.5vw, 4rem);
+  line-height: 1;
+  letter-spacing: -0.015em;
+}
+
+@utility t-h2 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(1.875rem, 1.25rem + 2.2vw, 2.75rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+
+@utility t-h3 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(1.375rem, 1.1rem + 0.9vw, 1.75rem);
+  line-height: 1.15;
+}
+
+@utility t-lead {
+  font-size: clamp(1.125rem, 1rem + 0.4vw, 1.25rem);
+  line-height: 1.5;
+  color: var(--color-graphite);
+}
+
+@utility t-label {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+@utility t-figure {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.5rem, 2rem + 2vw, 4rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Mise en page ---------- */
 @utility container-custom {
-  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  @apply mx-auto w-full max-w-[1200px] px-6 lg:px-12;
 }
 
 @utility section {
-  @apply py-16 sm:py-20 lg:py-28;
+  @apply py-20 lg:py-36;
 }
 
-@utility eyebrow {
-  @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-brand-600;
-}
-
+/* ---------- Composants ---------- */
 @utility btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 select-none;
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-[22px] py-3 text-sm font-semibold transition-colors duration-200 select-none whitespace-nowrap;
 }
 
 @utility btn-primary {
-  @apply btn bg-brand-600 text-white shadow-soft hover:bg-brand-700 hover:shadow-lift hover:-translate-y-0.5 active:translate-y-0;
+  @apply btn bg-moss text-paper hover:bg-ink;
 }
 
 @utility btn-secondary {
-  @apply btn border border-line bg-white text-ink hover:border-brand-300 hover:bg-brand-50;
+  @apply btn border border-ink bg-transparent text-ink hover:bg-ink hover:text-paper;
 }
 
-@utility btn-ghost {
-  @apply btn text-brand-700 hover:bg-brand-50;
+@utility btn-light {
+  @apply btn border border-paper/40 bg-transparent text-paper hover:bg-paper hover:text-ink;
 }
 
-@utility card {
-  @apply rounded-2xl border border-line bg-white shadow-soft transition-all duration-300;
+@utility link-text {
+  @apply inline-flex items-center gap-1.5 font-medium text-ink underline decoration-1 underline-offset-4 transition-colors hover:text-terre hover:decoration-terre;
 }
 
-@utility card-hover {
-  @apply hover:-translate-y-1 hover:shadow-lift hover:border-brand-200;
+@utility link-quiet {
+  @apply underline decoration-1 underline-offset-4 decoration-rule transition-colors hover:text-terre hover:decoration-terre;
 }
 
-@utility chip {
-  @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold;
+@utility rule {
+  @apply border-t border-rule;
 }
 
-@utility link-underline {
-  @apply underline decoration-brand-300 decoration-2 underline-offset-4 transition-colors hover:decoration-brand-600;
+@utility field {
+  @apply w-full rounded-[2px] border border-rule bg-paper-2 px-4 py-3 text-ink placeholder:text-stone transition-colors focus:border-ink focus:outline-none focus:ring-2 focus:ring-terre/40 disabled:opacity-60;
+}
+
+@utility portrait {
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 400ms ease;
 }
 
 @layer components {
-  .eyebrow::before {
-    content: "";
-    @apply h-px w-6 bg-brand-500;
+  .portrait-hover:hover .portrait,
+  .portrait-hover:focus-within .portrait {
+    filter: none;
   }
 
-  /* Fond décoratif : halos doux + trame de points, uniquement en CSS (aucune image à charger). */
-  .bg-mesh {
+  /* Règle graduée : le seul motif décoratif autorisé (traits fins tous les 8 px, longs tous les 80 px). */
+  .ruler {
+    height: 24px;
     background-image:
-      radial-gradient(60% 50% at 10% 0%, rgb(49 154 74 / 0.16), transparent 70%),
-      radial-gradient(45% 45% at 90% 10%, rgb(245 158 11 / 0.14), transparent 70%),
-      radial-gradient(50% 60% at 60% 100%, rgb(49 154 74 / 0.10), transparent 70%);
+      repeating-linear-gradient(to right, var(--color-rule) 0 1px, transparent 1px 80px),
+      repeating-linear-gradient(to right, var(--color-rule) 0 1px, transparent 1px 8px);
+    background-size: 100% 24px, 100% 10px;
+    background-position: left bottom, left bottom;
+    background-repeat: no-repeat;
   }
 
-  .bg-dots {
-    background-image: radial-gradient(rgb(17 32 26 / 0.08) 1px, transparent 1px);
-    background-size: 22px 22px;
+  .ruler-top {
+    background-position: left top, left top;
   }
 
-  .bg-band {
-    background-image:
-      radial-gradient(70% 90% at 0% 0%, rgb(87 181 109 / 0.35), transparent 60%),
-      radial-gradient(60% 80% at 100% 100%, rgb(245 158 11 / 0.18), transparent 60%),
-      linear-gradient(135deg, var(--color-brand-900), var(--color-brand-700));
+  /* Numéro de section en serif, couleur terre */
+  .index-number {
+    font-family: var(--font-serif);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-terre);
+  }
+
+  /* Défilement continu des partenaires : transform uniquement, pause au survol. */
+  .marquee {
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  }
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 45s linear infinite;
+    will-change: transform;
+  }
+
+  .marquee:hover .marquee-track,
+  .marquee:focus-within .marquee-track {
+    animation-play-state: paused;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee { mask-image: none; -webkit-mask-image: none; overflow-x: auto; }
+    .marquee-track { animation: none; }
+  }
+
+  /* Rangée d'index (activités) */
+  .index-row {
+    transition: transform 250ms ease, color 200ms ease;
+  }
+  .index-row:hover {
+    transform: translateX(8px);
+  }
+  .index-row:hover .index-number {
+    color: var(--color-ink);
   }
 }
 
-/* ---------- Animations d'apparition (sans JavaScript) ---------- */
-@keyframes reveal-up {
-  from { opacity: 0; transform: translateY(18px); }
+/* ---------- Apparition au chargement (hero uniquement) ---------- */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: none; }
 }
 
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 
-@keyframes float-y {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
+.rise { animation: rise 600ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.rise-1 { animation-delay: 80ms; }
+.rise-2 { animation-delay: 160ms; }
+.rise-3 { animation-delay: 240ms; }
+.rise-4 { animation-delay: 320ms; }
 
-/* Animées au défilement dans les navigateurs compatibles ; simplement visibles ailleurs. */
-@supports (animation-timeline: view()) {
-  .reveal {
-    animation: reveal-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-    animation-timeline: view();
-    animation-range: entry 0% entry 35%;
-  }
-}
-
-.animate-in {
-  animation: reveal-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.animate-in-delay-1 { animation-delay: 0.1s; }
-.animate-in-delay-2 { animation-delay: 0.2s; }
-.animate-in-delay-3 { animation-delay: 0.3s; }
-
-.animate-float {
-  animation: float-y 6s ease-in-out infinite;
-}
-
-/* Grille de cartes avec décalage progressif */
-.stagger > * { animation-delay: calc(var(--i, 0) * 60ms); }
-
-/* ---------- Contenu riche des articles (éditeur Lexical) ---------- */
+/* ---------- Contenu riche des articles (Lexical) ---------- */
 .rich-text {
-  @apply text-[1.05rem] leading-8 text-ink-soft;
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: var(--color-graphite);
 }
-.rich-text > * + * { margin-top: 1.25em; }
-.rich-text h2 { @apply mt-12 text-2xl sm:text-3xl text-ink; }
-.rich-text h3 { @apply mt-10 text-xl sm:text-2xl text-ink; }
-.rich-text h4 { @apply mt-8 text-lg text-ink; }
-.rich-text a { @apply link-underline text-brand-700 font-medium; }
+.rich-text > * + * { margin-top: 1.4em; }
+.rich-text h2 { @apply t-h2 mt-14 mb-6 text-ink; }
+.rich-text h3 { @apply t-h3 mt-10 mb-4 text-ink; }
+.rich-text h4 { @apply mt-8 text-lg font-semibold text-ink; }
+.rich-text a { @apply link-quiet text-ink; }
 .rich-text strong { @apply font-semibold text-ink; }
 .rich-text ul, .rich-text ol { @apply pl-6 space-y-2; }
 .rich-text ul { list-style: disc; }
 .rich-text ol { list-style: decimal; }
-.rich-text li::marker { color: var(--color-brand-500); }
+.rich-text li::marker { color: var(--color-terre); }
 .rich-text blockquote {
-  @apply border-l-4 border-brand-400 bg-brand-50 px-6 py-4 rounded-r-xl italic text-ink;
+  @apply border-l-2 border-terre pl-6 py-1 text-ink;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.5rem;
+  line-height: 1.35;
 }
-.rich-text img { @apply rounded-2xl shadow-soft mx-auto; }
-.rich-text hr { @apply my-12 border-line; }
-.rich-text code { @apply rounded bg-paper-2 px-1.5 py-0.5 text-[0.9em] font-mono; }
-.rich-text pre { @apply overflow-x-auto rounded-xl bg-ink p-5 text-sm text-paper; }
-.rich-text pre code { @apply bg-transparent p-0 text-inherit; }
+.rich-text img { @apply mx-auto border border-rule; }
+.rich-text hr { @apply my-14 border-rule; }
+.rich-text code { @apply rounded-[2px] bg-paper-2 px-1.5 py-0.5 text-[0.9em] font-mono; }
+.rich-text pre { @apply overflow-x-auto rounded-[2px] bg-ink p-5 text-sm text-paper; }
+.rich-text pre code { @apply bg-transparent p-0; }
 .rich-text table { @apply w-full text-sm border-collapse; }
-.rich-text th, .rich-text td { @apply border border-line px-3 py-2 text-left; }
+.rich-text th, .rich-text td { @apply border border-rule px-3 py-2 text-left; }
 .rich-text th { @apply bg-paper-2 font-semibold; }

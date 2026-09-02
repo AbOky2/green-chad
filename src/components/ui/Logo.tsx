@@ -5,16 +5,17 @@ import { SITE } from '@/lib/site'
 
 export default function Logo({ priority = false, light = false }: { priority?: boolean; light?: boolean }) {
   return (
-    <Link href="/" className="group inline-flex items-center gap-3" aria-label={`${SITE.name} — accueil`}>
-      <span className="relative h-11 w-11 overflow-hidden rounded-full ring-2 ring-brand-500/70 ring-offset-2 ring-offset-transparent transition-transform duration-300 group-hover:scale-105">
-        <Image src="/logo.jpg" alt="" fill sizes="44px" priority={priority} className="object-cover" />
-      </span>
-      <span className="flex flex-col leading-tight">
-        <span className={`text-lg font-bold tracking-tight ${light ? 'text-white' : 'text-ink'}`}>{SITE.shortName}</span>
-        <span className={`text-[0.7rem] font-medium uppercase tracking-[0.18em] ${light ? 'text-brand-200' : 'text-brand-600'}`}>
-          ONG · Tchad
-        </span>
-      </span>
+    <Link href="/" className="inline-flex items-center gap-3" aria-label={`${SITE.name} — accueil`}>
+      <Image
+        src="/logo.jpg"
+        alt=""
+        width={40}
+        height={40}
+        sizes="40px"
+        priority={priority}
+        className={`h-10 w-10 rounded-full border object-cover ${light ? 'border-paper/30' : 'border-rule'}`}
+      />
+      <span className={`serif text-[22px] leading-none ${light ? 'text-paper' : 'text-ink'}`}>{SITE.shortName}</span>
     </Link>
   )
 }

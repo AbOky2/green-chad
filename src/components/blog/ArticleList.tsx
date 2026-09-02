@@ -1,5 +1,3 @@
-import { FileText } from 'lucide-react'
-
 import ArticleCard from './ArticleCard'
 import BlogPagination from './BlogPagination'
 import { getArticlesPage } from '@/lib/articles'
@@ -9,12 +7,9 @@ export default async function ArticleList({ page, category }: { page: number; ca
 
   if (articles.length === 0) {
     return (
-      <div className="card mx-auto max-w-lg p-10 text-center">
-        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
-          <FileText className="h-6 w-6" />
-        </span>
-        <h2 className="mt-5 text-xl font-bold">Aucun article pour le moment</h2>
-        <p className="mt-2 text-ink-soft">
+      <div className="border-y border-rule py-20 text-center">
+        <p className="t-h3">Aucun article pour le moment</p>
+        <p className="mt-3 text-graphite">
           {category !== 'all' ? "Aucun article n'a encore été publié dans cette catégorie." : 'Revenez bientôt pour découvrir nos actualités.'}
         </p>
       </div>
@@ -23,13 +18,13 @@ export default async function ArticleList({ page, category }: { page: number; ca
 
   return (
     <>
-      <p className="mb-6 text-sm text-muted">
+      <p className="t-label mb-8 text-stone">
         {total} article{total > 1 ? 's' : ''}
         {totalPages > 1 && ` · page ${page} sur ${totalPages}`}
       </p>
-      <div className="stagger grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
         {articles.map((article, i) => (
-          <ArticleCard key={article.id} article={article} index={i} priority={page === 1 && i < 3} headingLevel="h2" />
+          <ArticleCard key={article.id} article={article} priority={page === 1 && i < 3} headingLevel="h2" />
         ))}
       </div>
       <BlogPagination currentPage={page} totalPages={totalPages} category={category} />

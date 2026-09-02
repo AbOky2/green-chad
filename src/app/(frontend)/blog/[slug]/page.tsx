@@ -2,11 +2,11 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, ArrowRight, CalendarDays, Clock, User } from 'lucide-react'
 
 import { RichText } from '@/components/RichText'
+import CategoryTag from '@/components/ui/CategoryTag'
+import { ArrowLeft, ArrowRight } from '@/components/ui/Icons'
 import { getArticleBySlug, getPublishedSlugs } from '@/lib/articles'
-import { categoryLabel, categoryStyle } from '@/lib/categories'
 import { formatDate } from '@/lib/format'
 import { SITE } from '@/lib/site'
 
@@ -45,8 +45,6 @@ export default async function ArticlePage({ params }: Props) {
   const article = await getArticleBySlug(slug)
   if (!article) notFound()
 
-  const style = categoryStyle(article.category)
-
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
@@ -59,65 +57,57 @@ export default async function ArticlePage({ params }: Props) {
   }
 
   return (
-    <article className="bg-white">
+    <article>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <header className="container-custom max-w-4xl pt-10 sm:pt-14">
-        <Link href="/blog" className="inline-flex items-center gap-2 text-sm font-medium text-muted transition-colors hover:text-brand-700">
-          <ArrowLeft className="h-4 w-4" />
-          Retour au blog
+      <header className="container-custom pt-12 lg:pt-20">
+        <Link href="/blog" className="link-text text-sm">
+          <ArrowLeft />
+          Actualités
         </Link>
 
-        <div className="animate-in mt-6">
-          <span className={`chip ${style.chip}`}>{categoryLabel(article.category)}</span>
-          <h1 className="mt-4 text-3xl leading-tight sm:text-4xl lg:text-5xl">{article.title}</h1>
-          {article.excerpt && <p className="mt-5 text-lg leading-relaxed text-ink-soft sm:text-xl">{article.excerpt}</p>}
-
-          <dl className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted">
-            <div className="flex items-center gap-2">
-              <dt className="sr-only">Auteur</dt>
-              <User className="h-4 w-4" aria-hidden />
-              <dd className="font-medium text-ink">{article.author}</dd>
-            </div>
-            <div className="flex items-center gap-2">
-              <dt className="sr-only">Date de publication</dt>
-              <CalendarDays className="h-4 w-4" aria-hidden />
-              <dd><time dateTime={article.publishedAt}>{formatDate(article.publishedAt)}</time></dd>
-            </div>
-            <div className="flex items-center gap-2">
-              <dt className="sr-only">Temps de lecture</dt>
-              <Clock className="h-4 w-4" aria-hidden />
-              <dd>{article.readingMinutes} min de lecture</dd>
-            </div>
-          </dl>
+        <div className="mx-auto mt-10 max-w-[680px]">
+          <p className="rise flex flex-wrap items-center gap-x-3 gap-y-1">
+            <CategoryTag value={article.category} />
+            <span className="t-label text-stone">·</span>
+            <time dateTime={article.publishedAt} className="t-label text-stone">{formatDate(article.publishedAt)}</time>
+            <span className="t-label text-stone">·</span>
+            <span className="t-label text-stone">{article.readingMinutes} min de lecture</span>
+          </p>
+          <h1 className="t-h1 rise rise-1 mt-6">{article.title}</h1>
+          {article.excerpt && <p className="t-lead rise rise-2 mt-6">{article.excerpt}</p>}
+          <p className="rise rise-2 mt-6 text-sm text-stone">Par {article.author}</p>
         </div>
       </header>
 
-      <div className="container-custom mt-10 max-w-5xl">
-        <figure className="animate-in animate-in-delay-1 relative aspect-[16/9] overflow-hidden rounded-3xl bg-paper-2 shadow-lift">
+      <div className="container-custom mt-12">
+        <figure className="rise rise-3 relative mx-auto aspect-[16/9] max-w-[1000px] overflow-hidden border border-rule bg-paper-2">
           <Image
             src={article.hero.url}
             alt={article.hero.alt}
             fill
             priority
-            sizes="(max-width: 1024px) 100vw, 1024px"
+            sizes="(max-width: 1024px) 100vw, 1000px"
             className="object-cover"
           />
         </figure>
       </div>
 
-      <div className="container-custom max-w-3xl py-12 sm:py-16">
-        <RichText content={article.content} className="rich-text" />
+      <div className="container-custom py-12 lg:py-20">
+        <div className="mx-auto max-w-[680px]">
+          <RichText content={article.content} className="rich-text" />
+        </div>
       </div>
 
-      <aside className="border-t border-line bg-paper">
-        <div className="container-custom max-w-3xl py-14 text-center">
-          <h2 className="text-2xl font-bold sm:text-3xl">Vous souhaitez en savoir plus ?</h2>
-          <p className="mt-3 text-ink-soft">Contactez-nous pour découvrir comment vous pouvez soutenir nos actions sur le terrain.</p>
-          <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
+      <aside className="container-custom pb-20 lg:pb-28">
+        <div className="mx-auto max-w-[680px] border-t border-rule pt-10">
+          <p className="serif text-3xl leading-tight">
+            Vous souhaitez soutenir nos actions <em>sur le terrain</em> ?
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
             <Link href="/#contact" className="btn-primary">
               Nous contacter
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight />
             </Link>
             <Link href="/blog" className="btn-secondary">
               Autres articles

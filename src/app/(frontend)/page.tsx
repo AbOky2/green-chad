@@ -5,6 +5,7 @@ import BlogPreview from '@/components/home/BlogPreview'
 import Team from '@/components/home/Team'
 import Partners from '@/components/home/Partners'
 import Contact from '@/components/home/Contact'
+import Ruler from '@/components/ui/Ruler'
 import { getFeaturedArticles } from '@/lib/articles'
 
 // Page statique régénérée au plus toutes les heures, et immédiatement après toute
@@ -23,6 +24,9 @@ export default async function HomePage() {
       <Team />
       <Partners />
       <Contact />
+      <div className="container-custom">
+        <Ruler position="top" />
+      </div>
     </>
   )
 }

@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+
+import { ArrowLeft, ArrowRight } from '@/components/ui/Icons'
 
 type Props = { currentPage: number; totalPages: number; category: string }
 
@@ -11,7 +12,7 @@ const pageHref = (page: number, category: string) => {
   return query ? `/blog?${query}` : '/blog'
 }
 
-const pageButton = 'inline-flex h-11 min-w-11 items-center justify-center rounded-full border border-line bg-white px-3 text-sm font-medium transition-colors'
+const item = 'serif inline-flex h-11 min-w-11 items-center justify-center px-2 text-xl transition-colors'
 
 export default function BlogPagination({ currentPage, totalPages, category }: Props) {
   if (totalPages <= 1) return null
@@ -21,35 +22,39 @@ export default function BlogPagination({ currentPage, totalPages, category }: Pr
   )
 
   return (
-    <nav aria-label="Pagination" className="mt-14 flex items-center justify-center gap-2">
+    <nav aria-label="Pagination" className="mt-16 flex items-center justify-between border-t border-rule pt-6">
       {currentPage > 1 ? (
-        <Link href={pageHref(currentPage - 1, category)} className={`${pageButton} hover:border-brand-300`} aria-label="Page précédente">
-          <ChevronLeft className="h-4 w-4" />
+        <Link href={pageHref(currentPage - 1, category)} className="link-text">
+          <ArrowLeft />
+          Précédent
         </Link>
       ) : (
-        <span className={`${pageButton} opacity-40`} aria-hidden><ChevronLeft className="h-4 w-4" /></span>
+        <span aria-hidden />
       )}
 
-      {pages.map((page, i) => {
-        const gap = i > 0 && page - pages[i - 1] > 1
-        return (
-          <span key={page} className="flex items-center gap-2">
-            {gap && <span className="px-1 text-muted">…</span>}
-            {page === currentPage ? (
-              <span aria-current="page" className={`${pageButton} border-brand-600 bg-brand-600 text-white`}>{page}</span>
-            ) : (
-              <Link href={pageHref(page, category)} className={`${pageButton} hover:border-brand-300`}>{page}</Link>
-            )}
-          </span>
-        )
-      })}
+      <ul className="flex items-center gap-1">
+        {pages.map((page, i) => {
+          const gap = i > 0 && page - pages[i - 1] > 1
+          return (
+            <li key={page} className="flex items-center">
+              {gap && <span className="px-2 text-stone">…</span>}
+              {page === currentPage ? (
+                <span aria-current="page" className={`${item} text-terre underline decoration-1 underline-offset-[6px]`}>{page}</span>
+              ) : (
+                <Link href={pageHref(page, category)} className={`${item} text-stone hover:text-ink`}>{page}</Link>
+              )}
+            </li>
+          )
+        })}
+      </ul>
 
       {currentPage < totalPages ? (
-        <Link href={pageHref(currentPage + 1, category)} className={`${pageButton} hover:border-brand-300`} aria-label="Page suivante">
-          <ChevronRight className="h-4 w-4" />
+        <Link href={pageHref(currentPage + 1, category)} className="link-text">
+          Suivant
+          <ArrowRight />
         </Link>
       ) : (
-        <span className={`${pageButton} opacity-40`} aria-hidden><ChevronRight className="h-4 w-4" /></span>
+        <span aria-hidden />
       )}
     </nav>
   )
