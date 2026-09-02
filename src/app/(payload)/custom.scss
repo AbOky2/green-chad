@@ -1,1 +1,9 @@
-/* Custom Payload admin styles - add overrides here if needed */
+/* Styles de l'administration Payload : touche de couleur Green-Chad. */
+:root {
+  --color-success-500: #2f9a48;
+}
+
+.nav__link[href$='/collections/documents']::before,
+.nav__link[href$='/collections/media']::before {
+  content: '';
+}

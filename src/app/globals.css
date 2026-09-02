@@ -1,32 +1,213 @@
 @import "tailwindcss";
 
+/* ---------- Thème Green-Chad ---------- */
 @theme {
-  --color-brand-green: #16a34a; /* green-600 */
-  --color-brand-dark: #0f172a; /* slate-900 */
-  --color-brand-light: #f8fafc; /* slate-50 */
+  --color-brand-50: #f1f9f2;
+  --color-brand-100: #ddf2e0;
+  --color-brand-200: #bde5c4;
+  --color-brand-300: #8dd19c;
+  --color-brand-400: #57b56d;
+  --color-brand-500: #319a4a;
+  --color-brand-600: #227c3a;
+  --color-brand-700: #1c6330;
+  --color-brand-800: #194f29;
+  --color-brand-900: #154123;
+  --color-brand-950: #0a2413;
+
+  --color-sun-400: #fbbf24;
+  --color-sun-500: #f59e0b;
+
+  --color-ink: #11201a;
+  --color-ink-soft: #3f524a;
+  --color-muted: #6b7f75;
+  --color-paper: #f7f8f4;
+  --color-paper-2: #eef3ec;
+  --color-line: #dfe7e0;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --shadow-soft: 0 1px 2px rgb(17 32 26 / 0.04), 0 8px 24px -12px rgb(17 32 26 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(17 32 26 / 0.05), 0 20px 40px -20px rgb(17 32 26 / 0.3);
+
+  --radius-xl2: 1.25rem;
 }
 
+/* ---------- Base ---------- */
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+  }
+
   body {
-    @apply bg-brand-light text-brand-dark antialiased;
-    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    @apply bg-paper text-ink antialiased;
+    font-family: var(--font-sans);
+    text-rendering: optimizeLegibility;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-bold tracking-tight;
+
+  h1, h2, h3, h4 {
+    @apply font-bold tracking-tight text-balance;
   }
+
+  p {
+    @apply text-pretty;
+  }
+
+  ::selection {
+    background: var(--color-brand-200);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ---------- Composants (déclarés en @utility pour pouvoir être combinés via @apply) ---------- */
+@utility container-custom {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+@utility section {
+  @apply py-16 sm:py-20 lg:py-28;
+}
+
+@utility eyebrow {
+  @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-brand-600;
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 select-none;
+}
+
+@utility btn-primary {
+  @apply btn bg-brand-600 text-white shadow-soft hover:bg-brand-700 hover:shadow-lift hover:-translate-y-0.5 active:translate-y-0;
+}
+
+@utility btn-secondary {
+  @apply btn border border-line bg-white text-ink hover:border-brand-300 hover:bg-brand-50;
+}
+
+@utility btn-ghost {
+  @apply btn text-brand-700 hover:bg-brand-50;
+}
+
+@utility card {
+  @apply rounded-2xl border border-line bg-white shadow-soft transition-all duration-300;
+}
+
+@utility card-hover {
+  @apply hover:-translate-y-1 hover:shadow-lift hover:border-brand-200;
+}
+
+@utility chip {
+  @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold;
+}
+
+@utility link-underline {
+  @apply underline decoration-brand-300 decoration-2 underline-offset-4 transition-colors hover:decoration-brand-600;
 }
 
 @layer components {
-  .container-custom {
-    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  .eyebrow::before {
+    content: "";
+    @apply h-px w-6 bg-brand-500;
   }
-  
-  .btn-primary {
-    @apply inline-flex items-center justify-center rounded-full bg-green-600 px-8 py-3 text-base font-medium text-white shadow-lg transition-all hover:bg-green-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2;
+
+  /* Fond décoratif : halos doux + trame de points, uniquement en CSS (aucune image à charger). */
+  .bg-mesh {
+    background-image:
+      radial-gradient(60% 50% at 10% 0%, rgb(49 154 74 / 0.16), transparent 70%),
+      radial-gradient(45% 45% at 90% 10%, rgb(245 158 11 / 0.14), transparent 70%),
+      radial-gradient(50% 60% at 60% 100%, rgb(49 154 74 / 0.10), transparent 70%);
   }
-  
-  .section-padding {
-    @apply py-20 lg:py-32;
+
+  .bg-dots {
+    background-image: radial-gradient(rgb(17 32 26 / 0.08) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  .bg-band {
+    background-image:
+      radial-gradient(70% 90% at 0% 0%, rgb(87 181 109 / 0.35), transparent 60%),
+      radial-gradient(60% 80% at 100% 100%, rgb(245 158 11 / 0.18), transparent 60%),
+      linear-gradient(135deg, var(--color-brand-900), var(--color-brand-700));
   }
 }
+
+/* ---------- Animations d'apparition (sans JavaScript) ---------- */
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Animées au défilement dans les navigateurs compatibles ; simplement visibles ailleurs. */
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 35%;
+  }
+}
+
+.animate-in {
+  animation: reveal-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-in-delay-1 { animation-delay: 0.1s; }
+.animate-in-delay-2 { animation-delay: 0.2s; }
+.animate-in-delay-3 { animation-delay: 0.3s; }
+
+.animate-float {
+  animation: float-y 6s ease-in-out infinite;
+}
+
+/* Grille de cartes avec décalage progressif */
+.stagger > * { animation-delay: calc(var(--i, 0) * 60ms); }
+
+/* ---------- Contenu riche des articles (éditeur Lexical) ---------- */
+.rich-text {
+  @apply text-[1.05rem] leading-8 text-ink-soft;
+}
+.rich-text > * + * { margin-top: 1.25em; }
+.rich-text h2 { @apply mt-12 text-2xl sm:text-3xl text-ink; }
+.rich-text h3 { @apply mt-10 text-xl sm:text-2xl text-ink; }
+.rich-text h4 { @apply mt-8 text-lg text-ink; }
+.rich-text a { @apply link-underline text-brand-700 font-medium; }
+.rich-text strong { @apply font-semibold text-ink; }
+.rich-text ul, .rich-text ol { @apply pl-6 space-y-2; }
+.rich-text ul { list-style: disc; }
+.rich-text ol { list-style: decimal; }
+.rich-text li::marker { color: var(--color-brand-500); }
+.rich-text blockquote {
+  @apply border-l-4 border-brand-400 bg-brand-50 px-6 py-4 rounded-r-xl italic text-ink;
+}
+.rich-text img { @apply rounded-2xl shadow-soft mx-auto; }
+.rich-text hr { @apply my-12 border-line; }
+.rich-text code { @apply rounded bg-paper-2 px-1.5 py-0.5 text-[0.9em] font-mono; }
+.rich-text pre { @apply overflow-x-auto rounded-xl bg-ink p-5 text-sm text-paper; }
+.rich-text pre code { @apply bg-transparent p-0 text-inherit; }
+.rich-text table { @apply w-full text-sm border-collapse; }
+.rich-text th, .rich-text td { @apply border border-line px-3 py-2 text-left; }
+.rich-text th { @apply bg-paper-2 font-semibold; }

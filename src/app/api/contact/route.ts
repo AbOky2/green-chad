@@ -1,104 +1,85 @@
-import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import { NextRequest, NextResponse } from 'next/server'
+import nodemailer from 'nodemailer'
 
-const RECEIVER_EMAIL = 'greenchad2010@gmail.com';
-const GENERIC_ERROR = 'Erreur lors de l\'envoi du message. Veuillez réessayer plus tard.';
+const RECEIVER_EMAIL = 'greenchad2010@gmail.com'
+const GENERIC_ERROR = "Erreur lors de l'envoi du message. Veuillez réessayer plus tard."
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
+const LIMITS = { name: 120, email: 200, subject: 150, message: 4000 } as const
+type Field = keyof typeof LIMITS
+
+const escapeHtml = (value: string) =>
+  value.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] as string)
+
+const badRequest = (error: string) => NextResponse.json({ error }, { status: 400 })
 
 export async function POST(request: NextRequest) {
+  const emailUser = (process.env.EMAIL_USER ?? '').trim()
+  const emailAppPassword = (process.env.EMAIL_APP_PASSWORD ?? '').replace(/\s/g, '') // Gmail : 16 caractères sans espaces
+  if (!emailUser || !emailAppPassword) {
+    console.error('[Contact API] Variables manquantes : EMAIL_USER ou EMAIL_APP_PASSWORD')
+    return NextResponse.json({ error: GENERIC_ERROR }, { status: 500 })
+  }
+
+  let body: Record<string, unknown>
   try {
-    // Vérifier et normaliser les variables d'environnement
-    const rawUser = process.env.EMAIL_USER ?? '';
-    const rawPass = process.env.EMAIL_APP_PASSWORD ?? '';
-    const emailUser = rawUser.trim();
-    const emailAppPassword = rawPass.replaceAll(/\s/g, ''); // Gmail: 16 caractères sans espaces
-    if (!emailUser || !emailAppPassword) {
-      console.error('[Contact API] Variables manquantes: EMAIL_USER=', !!rawUser, 'EMAIL_APP_PASSWORD=', !!rawPass);
-      return NextResponse.json(
-        { error: GENERIC_ERROR },
-        { status: 500 }
-      );
-    }
+    body = (await request.json()) as Record<string, unknown>
+  } catch {
+    return badRequest('Requête invalide.')
+  }
 
-    let body: Record<string, unknown>;
-    try {
-      body = (await request.json()) as Record<string, unknown>;
-    } catch {
-      return NextResponse.json(
-        { error: 'Requête invalide' },
-        { status: 400 }
-      );
-    }
+  // Champ piège : un robot qui le remplit est ignoré silencieusement.
+  if (typeof body.website === 'string' && body.website.trim() !== '') {
+    return NextResponse.json({ message: 'Message envoyé avec succès !' })
+  }
 
-    const { name, email, subject, message } = body as { name?: string; email?: string; subject?: string; message?: string };
+  const fields = {} as Record<Field, string>
+  for (const field of Object.keys(LIMITS) as Field[]) {
+    const value = typeof body[field] === 'string' ? (body[field] as string).trim() : ''
+    if (!value) return badRequest('Tous les champs sont requis.')
+    if (value.length > LIMITS[field]) return badRequest(`Le champ « ${field} » est trop long.`)
+    fields[field] = value
+  }
+  if (!EMAIL_PATTERN.test(fields.email)) return badRequest('Adresse email invalide.')
 
-    // Validation
-    if (!name || !email || !subject || !message) {
-      return NextResponse.json(
-        { error: 'Tous les champs sont requis' },
-        { status: 400 }
-      );
-    }
+  const safe = {
+    name: escapeHtml(fields.name),
+    email: escapeHtml(fields.email),
+    subject: escapeHtml(fields.subject),
+    message: escapeHtml(fields.message),
+  }
 
-    // Configuration du transporteur email
+  try {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
-      auth: {
-        user: emailUser,
-        pass: emailAppPassword,
-      },
-    });
+      auth: { user: emailUser, pass: emailAppPassword },
+    })
 
-    const mailOptions = {
+    await transporter.sendMail({
       from: emailUser,
       to: RECEIVER_EMAIL,
-      replyTo: email, // Permet de répondre directement à l'utilisateur
-      subject: `[Formulaire Contact] ${subject}`,
+      replyTo: fields.email,
+      subject: `[Formulaire Contact] ${fields.subject.replace(/[\r\n]+/g, ' ')}`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #16a34a; border-bottom: 2px solid #16a34a; padding-bottom: 10px;">
-            Nouveau message depuis le formulaire de contact
-          </h2>
-          
-          <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <p><strong>Nom:</strong> ${name}</p>
-            <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
-            <p><strong>Sujet:</strong> ${subject}</p>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #11201a;">
+          <h2 style="color: #227c3a; border-bottom: 2px solid #227c3a; padding-bottom: 10px;">Nouveau message depuis le site</h2>
+          <div style="background: #f7f8f4; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <p><strong>Nom :</strong> ${safe.name}</p>
+            <p><strong>Email :</strong> <a href="mailto:${safe.email}">${safe.email}</a></p>
+            <p><strong>Sujet :</strong> ${safe.subject}</p>
           </div>
-          
-          <div style="background-color: #ffffff; padding: 20px; border-left: 4px solid #16a34a; margin: 20px 0;">
-            <h3 style="color: #1e293b; margin-top: 0;">Message:</h3>
-            <p style="color: #475569; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+          <div style="padding: 20px; border-left: 4px solid #227c3a; margin: 20px 0;">
+            <p style="line-height: 1.6; white-space: pre-wrap;">${safe.message}</p>
           </div>
-          
-          <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 12px;">
-            <p>Ce message a été envoyé depuis le formulaire de contact du site GreenTchad.</p>
-          </div>
+          <p style="margin-top: 30px; color: #6b7f75; font-size: 12px;">Envoyé depuis le formulaire de contact du site Green-Chad.</p>
         </div>
       `,
-      text: `
-Nouveau message depuis le formulaire de contact
+      text: `Nouveau message depuis le site\n\nNom : ${fields.name}\nEmail : ${fields.email}\nSujet : ${fields.subject}\n\nMessage :\n${fields.message}\n`,
+    })
 
-Nom: ${name}
-Email: ${email}
-Sujet: ${subject}
-
-Message:
-${message}
-      `,
-    };
-
-    // Envoi de l'email
-    await transporter.sendMail(mailOptions);
-
-    return NextResponse.json(
-      { message: 'Message envoyé avec succès!' },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: 'Message envoyé avec succès !' })
   } catch (error) {
-    console.error('[Contact API] Erreur envoi email:', error);
-    return NextResponse.json(
-      { error: GENERIC_ERROR },
-      { status: 500 }
-    );
+    console.error('[Contact API] Erreur envoi email :', error)
+    return NextResponse.json({ error: GENERIC_ERROR }, { status: 500 })
   }
 }

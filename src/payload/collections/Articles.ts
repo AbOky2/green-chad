@@ -1,5 +1,22 @@
 import type { CollectionConfig } from 'payload'
 
+import { authenticated, editorsOrOwner, publishedOrAuthenticated } from '../access'
+import { CACHE_TAGS, revalidateAfterChange, revalidateAfterDelete } from '../hooks/revalidate'
+import { slugify } from '@/lib/slug'
+
+export const ARTICLE_CATEGORIES = [
+  { label: 'Environnement', value: 'environnement' },
+  { label: 'Éducation', value: 'education' },
+  { label: 'Santé', value: 'sante' },
+  { label: "L'eau, l'hygiène et l'assainissement", value: 'eauHygieneAssainissement' },
+  { label: 'Actualités', value: 'actualites' },
+  { label: 'Événements', value: 'evenements' },
+  { label: 'Sécurité alimentaire', value: 'securiteAlimentaire' },
+  { label: 'Formation technique et professionnelle', value: 'formation' },
+  { label: 'Violence basée sur le genre', value: 'violence' },
+  { label: 'La paix', value: 'paix' },
+] as const
+
 export const Articles: CollectionConfig = {
   slug: 'articles',
   labels: {
@@ -8,26 +25,34 @@ export const Articles: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'category', 'publishedAt', 'status'],
+    defaultColumns: ['title', 'category', 'author', 'publishedAt', 'status'],
     group: { fr: 'Contenu' },
-    description: { fr: 'Gérez les articles et actualités du blog' },
+    description: { fr: 'Articles et actualités du blog. Un article est visible sur le site une fois au statut « Publié ».' },
+    listSearchableFields: ['title', 'excerpt'],
   },
+  defaultSort: '-publishedAt',
   access: {
-    read: ({ req: { user } }) => {
-      // Public peut lire les articles publiés
-      if (!user) {
-        return {
-          status: {
-            equals: 'published',
-          },
-        }
-      }
-      // Authentifiés peuvent tout voir
-      return true
-    },
+    read: publishedOrAuthenticated,
+    create: authenticated,
+    update: editorsOrOwner('author'),
+    delete: editorsOrOwner('author'),
   },
   versions: {
     drafts: true,
+  },
+  hooks: {
+    beforeValidate: [
+      ({ data, req, operation }) => {
+        if (!data) return data
+        if (!data.slug && data.title) data.slug = slugify(data.title)
+        else if (data.slug) data.slug = slugify(data.slug)
+        if (operation === 'create' && !data.author && req.user) data.author = req.user.id
+        if (data.status === 'published' && !data.publishedAt) data.publishedAt = new Date().toISOString()
+        return data
+      },
+    ],
+    afterChange: [revalidateAfterChange(CACHE_TAGS.articles)],
+    afterDelete: [revalidateAfterDelete(CACHE_TAGS.articles)],
   },
   fields: [
     {
@@ -39,11 +64,12 @@ export const Articles: CollectionConfig = {
     {
       name: 'slug',
       type: 'text',
-      required: true,
       unique: true,
+      index: true,
       label: 'Slug (URL)',
       admin: {
-        description: 'URL de l\'article (ex: mon-premier-article)',
+        position: 'sidebar',
+        description: "Généré automatiquement à partir du titre si vide (ex: mon-premier-article).",
       },
     },
     {
@@ -51,7 +77,7 @@ export const Articles: CollectionConfig = {
       type: 'textarea',
       label: 'Extrait',
       admin: {
-        description: 'Court résumé (150-200 caractères)',
+        description: 'Court résumé affiché dans les listes (150-200 caractères)',
       },
       maxLength: 250,
     },
@@ -81,20 +107,10 @@ export const Articles: CollectionConfig = {
     {
       name: 'category',
       type: 'select',
-      options: [
-        { label: 'Environnement', value: 'environnement' },
-        { label: 'Éducation', value: 'education' },
-        { label: 'Santé', value: 'sante' },
-        { label: "L'eau, l’hygiène et l'assainissement", value: 'eauHygieneAssainissement' },
-        { label: 'Actualités', value: 'actualites' },
-        { label: 'Événements', value: 'evenements' },
-        { label: 'Sécurité alimentaire', value: 'securiteAlimentaire' },
-        { label: 'Formation technique et professionnelle', value: 'formation' },
-        { label: 'Violence basée sur le genre', value: 'violence' },
-        { label: 'La paix', value: 'paix' },
-      ],
+      options: [...ARTICLE_CATEGORIES],
       required: true,
       label: 'Catégorie',
+      index: true,
       admin: {
         position: 'sidebar',
       },
@@ -117,6 +133,7 @@ export const Articles: CollectionConfig = {
       name: 'publishedAt',
       type: 'date',
       label: 'Date de publication',
+      index: true,
       admin: {
         position: 'sidebar',
         date: {
@@ -133,6 +150,7 @@ export const Articles: CollectionConfig = {
       ],
       defaultValue: 'draft',
       required: true,
+      index: true,
       label: 'Statut',
       admin: {
         position: 'sidebar',

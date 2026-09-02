@@ -20,6 +20,30 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 Le site utilise des **polices système** (pas de chargement de polices externes) pour mieux fonctionner sur connexions lentes ou instables (ex. accès depuis le Tchad).
 
+## Scripts utiles
+
+| Commande | Rôle |
+|----------|------|
+| `npm run dev` | Serveur de développement |
+| `npm run build` | Build de production |
+| `npm run lint` / `npm run typecheck` | Vérifications |
+| `npm run generate:types` | Régénère `payload-types.ts` après modification d'une collection |
+| `npm run generate:importmap` | Régénère l'import map de l'admin après ajout d'un composant admin |
+
+## Pages
+
+- `/` : accueil
+- `/blog` et `/blog/[slug]` : actualités
+- `/documents` : documents officiels déposés par les membres (règlement intérieur, chartes…)
+- `/admin` : espace membres (Payload CMS) — voir `PAYLOAD_SETUP.md`
+
+## Performance
+
+- Les pages lisent la base **directement via l'API locale Payload** (plus d'appel HTTP du serveur vers lui-même) et sont mises en cache ; le cache est invalidé automatiquement à chaque publication dans l'admin.
+- Les fichiers (images, documents) sont servis **directement par le CDN Vercel Blob**.
+- Aucune bibliothèque d'animation : transitions en CSS natif, JavaScript client réduit au strict minimum (menu mobile, formulaire de contact).
+- Images converties en WebP et redimensionnées à l'envoi.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
