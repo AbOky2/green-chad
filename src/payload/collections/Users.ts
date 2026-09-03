@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { adminFieldAccess, admins, adminsOrSelf } from '../access'
+
 export const Users: CollectionConfig = {
   slug: 'users',
   labels: {
@@ -8,13 +10,23 @@ export const Users: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'name',
+    defaultColumns: ['name', 'email', 'role'],
     group: { fr: 'Administration' },
-    description: { fr: 'Gérez les comptes des membres de l\'équipe' },
+    description: { fr: "Comptes des membres de l'équipe. Seul un administrateur peut créer des comptes ou changer les rôles." },
+  },
+  auth: {
+    tokenExpiration: 60 * 60 * 24 * 7, // 7 jours
+    maxLoginAttempts: 5,
+    lockTime: 15 * 60 * 1000,
   },
   access: {
-    read: () => true,
+    // Les emails ne doivent pas être exposés publiquement : lecture réservée aux membres connectés.
+    read: ({ req: { user } }) => Boolean(user),
+    create: admins,
+    update: adminsOrSelf,
+    delete: admins,
+    admin: ({ req: { user } }) => Boolean(user),
   },
-  auth: true,
   fields: [
     {
       name: 'name',
@@ -33,6 +45,16 @@ export const Users: CollectionConfig = {
       ],
       required: true,
       defaultValue: 'author',
+      saveToJWT: true,
+      access: {
+        create: adminFieldAccess,
+        update: adminFieldAccess,
+      },
+      admin: {
+        position: 'sidebar',
+        description:
+          'Administrateur : tout gérer. Éditeur : gérer tous les articles et documents. Auteur : ses propres contenus.',
+      },
     },
     {
       name: 'bio',

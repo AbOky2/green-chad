@@ -45,5 +45,8 @@ next-env.d.ts
 
 # Payload CMS
 /public/uploads
-payload-types.ts
 .payload
+
+# Uploads locaux (sans Vercel Blob)
+/media
+/documents

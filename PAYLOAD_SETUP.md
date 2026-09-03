@@ -12,25 +12,28 @@ Payload CMS a été intégré au projet Green-Chad pour permettre la gestion des
 - **SEO plugin** - Optimisation SEO automatique
 - **Sharp** - Traitement d'images optimisé
 
-## 🗂️ Structure créée
+## 🗂️ Structure du projet
 
 ```
 ├── payload.config.ts                    # Configuration principale Payload
+├── payload-types.ts                     # Types générés (npm run generate:types) — committé
 ├── src/
 │   ├── payload/
-│   │   └── collections/
-│   │       ├── Users.ts                 # Collection utilisateurs (auth)
-│   │       ├── Articles.ts              # Collection articles/blog
-│   │       └── Media.ts                 # Collection médias (images)
+│   │   ├── access/                      # Règles d'accès par rôle (admin / éditeur / auteur)
+│   │   ├── collections/
+│   │   │   ├── Users.ts                 # Comptes des membres (auth)
+│   │   │   ├── Articles.ts              # Articles du blog
+│   │   │   ├── Documents.ts             # Fichiers partagés avec le public (PDF, Word…)
+│   │   │   └── Media.ts                 # Images (réduites + WebP automatiquement)
+│   │   ├── hooks/                       # Quota de stockage, invalidation du cache
+│   │   ├── plugins/blobClientUploads.ts # Envoi direct navigateur → Vercel Blob
+│   │   ├── components/                  # Widget « Espace de stockage » du tableau de bord
+│   │   └── storage.ts                   # Limites de taille, quota, types acceptés
+│   ├── lib/                             # Accès aux données (API locale Payload + cache Next)
 │   ├── app/
-│   │   ├── (payload)/admin/             # Interface admin Payload
-│   │   └── blog/
-│   │       ├── page.tsx                 # Liste des articles
-│   │       └── [slug]/page.tsx          # Page article individuel
-│   └── components/
-│       └── BlogSection.tsx              # Section blog pour homepage
-└── public/
-    └── uploads/                         # Dossier uploads (gitignored)
+│   │   ├── (payload)/admin/             # Interface d'administration
+│   │   └── (frontend)/                  # Site public : accueil, /blog, /documents
+│   └── components/                      # Composants du site
 ```
 
 ## 🚀 Configuration étape par étape
@@ -57,6 +60,13 @@ EMAIL_APP_PASSWORD=votre_mot_de_passe_gmail
 PAYLOAD_SECRET=<générer_avec_npm_run_generate:secret>
 DATABASE_URL=postgresql://user:password@ep-xxx.region.aws.neon.tech/neondb?sslmode=require
 NEXT_PUBLIC_SERVER_URL=http://localhost:3000
+
+# Stockage des fichiers (facultatif en local : sans jeton, les fichiers vont dans ./media et ./documents)
+BLOB_READ_WRITE_TOKEN=vercel_blob_rw_xxx
+# Limites de stockage (valeurs par défaut si absentes)
+MAX_FILE_SIZE_MB=20
+STORAGE_QUOTA_MB=1000
+STORAGE_WARN_PERCENT=80
 ```
 
 **Générer PAYLOAD_SECRET** :
@@ -110,15 +120,38 @@ Payload créera automatiquement les tables dans la base de données au premier d
 | `/blog/[slug]` | Page d'un article individuel |
 | `/api/articles` | API REST pour récupérer les articles |
 
-## 👥 Gestion des utilisateurs
+## 👥 Gestion des utilisateurs et rôles
 
-Dans l'admin, vous pouvez créer plusieurs utilisateurs avec différents rôles :
+Seul un **administrateur** peut créer des comptes ou changer un rôle (Admin → Collections → Utilisateurs → Créer).
 
-- **Admin** : accès complet (gestion utilisateurs, articles, médias)
-- **Éditeur** : peut publier et éditer tous les articles
-- **Auteur** : peut créer et éditer ses propres articles
+| Rôle | Articles & documents | Médias | Utilisateurs |
+|------|----------------------|--------|--------------|
+| **Administrateur** | Tout gérer | Tout gérer | Créer, modifier, supprimer |
+| **Éditeur** | Créer, modifier et supprimer tous les contenus | Tout gérer | Modifier sa propre fiche |
+| **Auteur** | Créer ; modifier et supprimer **ses propres** contenus | Ses propres images | Modifier sa propre fiche |
 
-**Créer un nouvel utilisateur** : Admin → Collections → Users → Create New
+Le public ne voit que les contenus au statut **Publié**. Les emails des membres ne sont jamais exposés par l'API publique.
+
+## 📁 Documents partagés (règlement intérieur, chartes…)
+
+1. Admin → **Documents** → **Créer**
+2. Choisissez le fichier (PDF, Word, Excel, PowerPoint, OpenDocument, texte, image), donnez un **titre**, une **catégorie** et éventuellement une description
+3. Passez le statut à **Publié** → le fichier apparaît sur **https://www.greenchad.com/documents**, classé par catégorie, avec un bouton « Télécharger »
+
+Le membre qui dépose un fichier est enregistré automatiquement (« Déposé par »). Les auteurs ne peuvent modifier ou supprimer que leurs propres fichiers.
+
+## 💾 Gestion du stockage (offre gratuite Vercel Blob)
+
+Le stockage gratuit est limité (≈ 1 Go). Plusieurs garde-fous sont en place :
+
+- **Images réduites automatiquement** : max. 1600 px et conversion **WebP** (une photo de téléphone de 5 Mo pèse ~300 Ko une fois stockée). Les déclinaisons (vignette, carte, une) sont aussi en WebP.
+- **Taille maximale par fichier** : `MAX_FILE_SIZE_MB` (20 Mo par défaut).
+- **Quota global** : `STORAGE_QUOTA_MB` (1000 Mo par défaut). Un envoi qui dépasserait le quota est refusé avec un message explicite.
+- **Tableau de bord** : un widget « Espace de stockage » en haut de l'admin affiche l'espace utilisé par les images et les documents, et alerte à partir de `STORAGE_WARN_PERCENT` (80 %).
+- **Envoi direct navigateur → Blob** : les fichiers ne transitent pas par le serveur (limite de 4,5 Mo des fonctions Vercel contournée), et le jeton d'envoi porte les limites de taille et de type.
+- **Fichiers servis directement par le CDN Blob** (plus de passage par une fonction serverless) : pages plus rapides et moins de charge.
+
+Pour libérer de l'espace : supprimez les anciens médias/documents inutiles dans l'admin (le fichier est supprimé du Blob en même temps).
 
 ## 📤 Déploiement sur Vercel
 
@@ -134,6 +167,8 @@ Dans **Vercel** → votre projet → **Settings** → **Environment Variables**,
 | `NEXT_PUBLIC_SERVER_URL` | `https://<preview-url>.vercel.app` | Preview |
 | `EMAIL_USER` | `greenchad2010@gmail.com` | Production, Preview |
 | `EMAIL_APP_PASSWORD` | Mot de passe Gmail | Production, Preview |
+| `BLOB_READ_WRITE_TOKEN` | Jeton du store Vercel Blob (Storage → Blob → Connect) | Production, Preview |
+| `MAX_FILE_SIZE_MB` / `STORAGE_QUOTA_MB` | (facultatif) limites de stockage | Production |
 
 ### Redéploiement
 
@@ -148,10 +183,12 @@ Après avoir ajouté les variables, **redéployez** le projet :
 
 ## 🔒 Sécurité
 
-- ✅ Le dossier `public/uploads/` est dans `.gitignore` (ne committez jamais les images)
 - ✅ `.env.local` est ignoré (ne partagez jamais vos secrets)
-- ✅ Les articles avec `status: draft` ne sont visibles que par les admins
-- ✅ L'authentification Payload est sécurisée par défaut
+- ✅ Les contenus en brouillon ne sont visibles que par les membres connectés
+- ✅ Les emails des membres ne sont pas exposés publiquement
+- ✅ Seul un administrateur peut créer des comptes ou modifier les rôles
+- ✅ Les types de fichiers sont vérifiés côté serveur (contenu réel du fichier, pas seulement l'extension)
+- ⚠️ L'ancienne route `/api/setup-admin` (qui créait un compte admin avec un mot de passe connu) a été supprimée : le premier compte se crée via `/admin`
 
 ## 🎨 Personnalisation
 
@@ -170,14 +207,11 @@ Après avoir ajouté les variables, **redéployez** le projet :
 }
 ```
 
-Puis dans `src/components/BlogSection.tsx` et `src/app/blog/page.tsx`, ajoutez la couleur :
+Puis dans `src/lib/categories.ts`, ajoutez la couleur et le libellé court du filtre. Régénérez ensuite les types : `npm run generate:types`.
 
-```typescript
-const categoryColors: Record<string, string> = {
-  // ... couleurs existantes
-  'nouvelle-categorie': "bg-indigo-100 text-indigo-700",
-};
-```
+### Ajouter une catégorie de document
+
+Éditez `DOCUMENT_CATEGORIES` dans `src/payload/collections/Documents.ts`, puis `npm run generate:types`.
 
 ### Modifier les champs d'article
 
@@ -198,7 +232,10 @@ const categoryColors: Record<string, string> = {
 → Vérifiez que `DATABASE_URL` est correcte et que le projet Neon est actif
 
 ### Images ne s'affichent pas
-→ Le dossier `public/uploads/` doit exister. Payload le crée automatiquement au premier upload.
+→ En production, vérifiez `BLOB_READ_WRITE_TOKEN`. En local sans jeton, les fichiers sont écrits dans `./media` et `./documents`.
+
+### « Espace de stockage insuffisant » à l'envoi
+→ Le quota (`STORAGE_QUOTA_MB`) est atteint : supprimez des fichiers inutiles ou augmentez la valeur si votre offre Vercel le permet.
 
 ### Articles ne s'affichent pas sur /blog
 → Vérifiez que les articles ont `status: published` dans l'admin
@@ -206,7 +243,8 @@ const categoryColors: Record<string, string> = {
 ## ✨ Fonctionnalités disponibles
 
 - ✅ Éditeur de texte riche (Lexical)
-- ✅ Upload d'images avec redimensionnement automatique (thumbnail, card, featured)
+- ✅ Upload d'images avec réduction et conversion WebP automatiques (thumbnail, card, featured)
+- ✅ Documents téléchargeables par le public (/documents) avec quota de stockage
 - ✅ Gestion des brouillons et versions
 - ✅ SEO automatique (meta title, description)
 - ✅ Catégories et tags

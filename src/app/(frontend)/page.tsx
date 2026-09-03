@@ -1,60 +1,29 @@
-import dynamic from "next/dynamic";
-import { getPayload } from "payload";
-import config from "@payload-config";
-import Hero from "@/components/Hero";
-import BlogSection from "@/components/BlogSection";
+import Hero from '@/components/home/Hero'
+import Ticker from '@/components/home/Ticker'
+import About from '@/components/home/About'
+import Domains from '@/components/home/Domains'
+import BlogPreview from '@/components/home/BlogPreview'
+import Team from '@/components/home/Team'
+import Partners from '@/components/home/Partners'
+import Contact from '@/components/home/Contact'
+import { getFeaturedArticles } from '@/lib/articles'
 
-const About = dynamic(() => import("@/components/AboutSection"), { loading: () => null });
-const Activities = dynamic(() => import("@/components/ActivitiesSection"), { loading: () => null });
-const TeamSection = dynamic(() => import("@/components/TeamSection"), { loading: () => null });
-const Partners = dynamic(() => import("@/components/PartnersSection"), { loading: () => null });
-const Contact = dynamic(() => import("@/components/ContactSection"), { loading: () => null });
+// Page statique régénérée au plus toutes les heures, et immédiatement après toute
+// modification d'article dans l'admin (invalidation par tag).
+export const revalidate = 3600
 
-export const revalidate = 60;
-
-async function getFeaturedArticles() {
-  try {
-    const payload = await getPayload({ config });
-    const { docs } = await payload.find({
-      collection: "articles",
-      where: { status: { equals: "published" } },
-      sort: "-publishedAt",
-      limit: 3,
-      depth: 1,
-      draft: false,
-    });
-    return docs.map((a) => ({
-      id: String(a.id),
-      title: a.title,
-      slug: a.slug,
-      excerpt: a.excerpt || "",
-      featuredImage: {
-        url: (a.featuredImage && typeof a.featuredImage === "object" && a.featuredImage.url) || "/logo.jpg",
-        alt: (a.featuredImage && typeof a.featuredImage === "object" && a.featuredImage.alt) || a.title,
-      },
-      author: {
-        name: (a.author && typeof a.author === "object" && a.author.name) || "Green-Chad",
-      },
-      publishedAt: a.publishedAt || new Date().toISOString(),
-      category: a.category || "actualites",
-    }));
-  } catch {
-    return [];
-  }
-}
-
-export default async function Home() {
-  const articles = await getFeaturedArticles();
-
+export default async function HomePage() {
+  const articles = await getFeaturedArticles(3)
   return (
-    <div className="flex flex-col">
+    <>
       <Hero />
+      <Ticker />
       <About />
-      <Activities />
-      <BlogSection articles={articles} />
-      <TeamSection />
+      <Domains />
+      <BlogPreview articles={articles} />
+      <Team />
       <Partners />
       <Contact />
-    </div>
-  );
+    </>
+  )
 }

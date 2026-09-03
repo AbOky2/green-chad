@@ -1,120 +1,96 @@
-import { Metadata } from "next";
-import Image from "next/image";
-import Link from "next/link";
-import { Calendar, User, ArrowLeft } from "lucide-react";
-import { notFound } from "next/navigation";
-import { RichText } from "@/components/RichText";
+import type { Metadata } from 'next'
+import Image from 'next/image'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
 
-type Props = {
-  params: Promise<{ slug: string }>;
-};
+import { RichText } from '@/components/RichText'
+import CategoryTag from '@/components/ui/CategoryTag'
+import { ArrowLeft, ArrowRight } from '@/components/ui/Icons'
+import { getArticleBySlug, getPublishedSlugs } from '@/lib/articles'
+import { formatDate } from '@/lib/format'
+import { SITE } from '@/lib/site'
 
-async function getArticle(slug: string) {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/articles?where[slug][equals]=${slug}&where[status][equals]=published`,
-      { next: { revalidate: 60 } }
-    );
+type Props = { params: Promise<{ slug: string }> }
 
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.docs?.[0] || null;
-  } catch {
-    return null;
-  }
+export const revalidate = 3600
+export const dynamicParams = true
+
+export async function generateStaticParams() {
+  const slugs = await getPublishedSlugs()
+  return slugs.map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
-  const article = await getArticle(slug);
-
-  if (!article) {
-    return {
-      title: "Article non trouvé - ONG Green-Chad",
-    };
-  }
-
+  const { slug } = await params
+  const article = await getArticleBySlug(slug)
+  if (!article) return { title: 'Article introuvable' }
   return {
-    title: `${article.title} - ONG Green-Chad`,
+    title: article.title,
     description: article.excerpt || article.title,
-    openGraph: {
-      title: article.title,
-      description: article.excerpt || "",
-      images: article.featuredImage?.url ? [article.featuredImage.url] : [],
-    },
-  };
+    alternates: { canonical: `/blog/${article.slug}` },
+    openGraph: { type: 'article', title: article.title, description: article.excerpt || '', publishedTime: article.publishedAt, authors: [article.author], images: [article.hero.url] },
+  }
 }
 
 export default async function ArticlePage({ params }: Props) {
-  const { slug } = await params;
-  const article = await getArticle(slug);
+  const { slug } = await params
+  const article = await getArticleBySlug(slug)
+  if (!article) notFound()
 
-  if (!article) {
-    notFound();
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: article.title,
+    description: article.excerpt,
+    image: [article.hero.url],
+    datePublished: article.publishedAt,
+    author: { '@type': 'Person', name: article.author },
+    publisher: { '@type': 'Organization', name: SITE.name, logo: { '@type': 'ImageObject', url: `${SITE.url}/logo.jpg` } },
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="relative h-[50vh] min-h-[400px] w-full overflow-hidden bg-slate-900">
-        <Image
-          src={article.featuredImage?.url || "/logo.jpg"}
-          alt={article.featuredImage?.alt || article.title}
-          fill
-          priority
-          sizes="100vw"
-          className="object-contain"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-8 lg:p-16 text-white">
-          <div className="container-custom max-w-4xl">
-            <Link
-              href="/blog"
-              className="inline-flex items-center gap-2 text-sm mb-4 hover:text-green-300 transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Retour au blog
-            </Link>
-            <h1 className="text-3xl lg:text-5xl font-bold mb-4">{article.title}</h1>
-            <div className="flex items-center gap-6 text-sm">
-              <span className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                {article.author?.name || "Anonyme"}
-              </span>
-              <span className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                {new Date(article.publishedAt || article.createdAt).toLocaleDateString("fr-FR", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
-              </span>
-            </div>
+    <article>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+
+      <header className="container-custom pt-28 sm:pt-32">
+        <Link href="/blog" className="link-arrow text-sm text-ink-soft hover:text-ink">
+          <ArrowLeft />
+          Actualités
+        </Link>
+        <div className="mx-auto mt-8 max-w-3xl text-center">
+          <div className="rise flex flex-wrap items-center justify-center gap-3">
+            <CategoryTag value={article.category} />
+            <span className="text-xs font-semibold uppercase tracking-wider text-mute">
+              <time dateTime={article.publishedAt}>{formatDate(article.publishedAt)}</time> · {article.readingMinutes} min de lecture
+            </span>
+          </div>
+          <h1 className="t-h1 rise mt-6" style={{ '--d': '80ms' } as React.CSSProperties}>{article.title}</h1>
+          {article.excerpt && <p className="t-lead rise mt-5 text-ink-soft" style={{ '--d': '160ms' } as React.CSSProperties}>{article.excerpt}</p>}
+          <p className="rise mt-5 text-sm font-semibold text-mute" style={{ '--d': '200ms' } as React.CSSProperties}>Par {article.author}</p>
+        </div>
+      </header>
+
+      <div className="container-custom mt-10">
+        <figure className="rise relative mx-auto aspect-[16/9] max-w-5xl overflow-hidden rounded-4xl bg-ivory-2 shadow-lift" style={{ '--d': '240ms' } as React.CSSProperties}>
+          <Image src={article.hero.url} alt={article.hero.alt} fill priority sizes="(max-width: 1024px) 100vw, 1024px" className="object-cover" />
+        </figure>
+      </div>
+
+      <div className="container-custom py-12 lg:py-20">
+        <div className="mx-auto max-w-[700px]">
+          <RichText content={article.content} className="rich-text" />
+        </div>
+      </div>
+
+      <aside className="container-custom pb-20 lg:pb-28">
+        <div className="mx-auto max-w-[700px] rounded-4xl bg-night p-8 text-ivory sm:p-10">
+          <p className="t-h3 sm:text-2xl">Vous souhaitez soutenir nos actions <span className="text-sun">sur le terrain</span> ?</p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link href="/#contact" className="btn-sun">Nous contacter<ArrowRight /></Link>
+            <Link href="/blog" className="btn-ghost-light">Autres articles</Link>
           </div>
         </div>
-      </div>
-
-      <div className="container-custom max-w-4xl py-16">
-        <div
-          className="prose prose-lg prose-slate max-w-none"
-        >
-          <RichText content={article.content} />
-        </div>
-      </div>
-
-      <div className="bg-slate-50 py-12">
-        <div className="container-custom max-w-4xl text-center">
-          <h3 className="text-2xl font-bold text-slate-900 mb-4">Vous souhaitez en savoir plus ?</h3>
-          <p className="text-slate-600 mb-6">
-            Contactez-nous pour découvrir comment vous pouvez soutenir nos actions.
-          </p>
-          <Link
-            href="/#contact"
-            className="inline-flex items-center justify-center rounded-full bg-green-600 px-8 py-3 text-base font-medium text-white shadow-lg transition-all hover:bg-green-700 hover:shadow-xl"
-          >
-            Nous contacter
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
+      </aside>
+    </article>
+  )
 }

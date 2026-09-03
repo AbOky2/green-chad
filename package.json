@@ -8,7 +8,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
     "payload": "payload",
+    "generate:types": "payload generate:types",
+    "generate:importmap": "payload generate:importmap",
     "generate:secret": "node -e \"console.log('PAYLOAD_SECRET=' + require('crypto').randomBytes(32).toString('hex'))\""
   },
   "dependencies": {
@@ -19,8 +22,7 @@
     "@payloadcms/richtext-lexical": "^3.74.0",
     "@payloadcms/storage-vercel-blob": "^3.74.0",
     "@types/nodemailer": "^7.0.5",
-    "framer-motion": "^12.26.2",
-    "lucide-react": "^0.562.0",
+    "@vercel/blob": "^0.22.3",
     "next": "16.1.1",
     "nodemailer": "^7.0.12",
     "payload": "^3.74.0",
