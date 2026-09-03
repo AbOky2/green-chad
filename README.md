@@ -36,7 +36,9 @@ Les logos sont dans `public/partners/` (PNG, hauteur 240 px) et la liste dans `s
 | Commande | Rôle |
 |----------|------|
 | `npm run dev` | Serveur de développement |
-| `npm run build` | Build de production |
+| `npm run build` | Applique les migrations de base puis build de production |
+| `npm run db:migrate` | Applique les migrations sur la base `DATABASE_URL` |
+| `npm run db:migrate:create <nom>` | Génère une migration après modification d'une collection |
 | `npm run lint` / `npm run typecheck` | Vérifications |
 | `npm run generate:types` | Régénère `payload-types.ts` après modification d'une collection |
 | `npm run generate:importmap` | Régénère l'import map de l'admin après ajout d'un composant admin |
