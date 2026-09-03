@@ -1,59 +1,71 @@
-import Image from 'next/image'
 import Link from 'next/link'
 
+import ChadDots from '@/components/ui/ChadDots'
+import Counter from '@/components/ui/Counter'
 import { ArrowRight } from '@/components/ui/Icons'
-import Ruler from '@/components/ui/Ruler'
 import { SITE } from '@/lib/site'
 
-const figures = [
-  { value: '08', label: "domaines d'intervention" },
-  { value: String(SITE.since), label: 'année de création' },
-  { value: '100 %', label: 'équipe tchadienne' },
+const stats = [
+  { value: 8, suffix: '', label: "domaines d'intervention" },
+  { value: 15, suffix: '+', label: 'projets menés' },
+  { value: 100, suffix: '%', label: 'équipe tchadienne' },
 ]
 
 export default function Hero() {
   return (
-    <section className="container-custom pt-14 lg:pt-24">
-      <div className="grid gap-14 lg:grid-cols-12 lg:gap-12">
+    <section className="relative overflow-hidden bg-night text-ivory">
+      <div className="dots-bg absolute inset-0" aria-hidden />
+      {/* Halo solaire : un seul dégradé radial, discret, derrière la carte */}
+      <div className="parallax-fade pointer-events-none absolute -right-40 top-1/3 h-[640px] w-[640px] rounded-full bg-[radial-gradient(closest-side,rgb(246_178_27/0.22),transparent)]" aria-hidden />
+
+      <div className="container-custom relative grid min-h-[92svh] items-center gap-12 pb-20 pt-32 lg:grid-cols-12 lg:pb-24 lg:pt-40">
         <div className="lg:col-span-7">
-          <p className="t-label rise text-terre">
-            ONG nationale · N&apos;Djamena, Tchad · depuis {SITE.since}
-          </p>
-          <h1 className="t-display rise rise-1 mt-8">
-            Outiller les citoyens tchadiens pour un développement <em>durable</em>.
+          <span className="badge rise border-white/15 bg-white/5 text-ivory/85 backdrop-blur-sm">
+            <span className="h-1.5 w-1.5 rounded-full bg-sun" aria-hidden />
+            {SITE.recognition}
+          </span>
+
+          <h1 className="t-hero rise mt-7" style={{ '--d': '40ms' } as React.CSSProperties}>
+            Un Tchad <span className="text-leaf">vert</span>, prospère et&nbsp;résilient.
           </h1>
-          <p className="t-lead rise rise-2 mt-8 max-w-xl">
-            Environnement, éducation, santé, paix : nous agissons sur le terrain, avec les communautés, pour un Tchad qui
-            protège ses ressources et ses habitants.
+
+          <p className="t-lead rise mt-7 max-w-xl text-ivory/70" style={{ '--d': '90ms' } as React.CSSProperties}>
+            Nous outillons les citoyens tchadiens pour relever le défi du développement durable : environnement, éducation,
+            santé, paix, avec les communautés et sur le terrain.
           </p>
-          <div className="rise rise-3 mt-10 flex flex-wrap gap-3">
-            <Link href="/#about" className="btn-primary">
-              Découvrir notre mission
+
+          <div className="rise mt-9 flex flex-wrap gap-3" style={{ '--d': '140ms' } as React.CSSProperties}>
+            <Link href="/#domaines" className="btn-sun">
+              Découvrir nos actions
               <ArrowRight />
             </Link>
-            <Link href="/documents" className="btn-secondary">
+            <Link href="/documents" className="btn-ghost-light">
               Documents officiels
             </Link>
           </div>
-        </div>
 
-        <div className="rise rise-2 lg:col-span-5">
-          <figure className="flex aspect-square items-center justify-center border border-rule bg-paper-2/40 p-10 lg:mx-auto lg:max-w-[420px]">
-            <span className="relative h-3/5 w-3/5">
-              <Image src="/logo.jpg" alt={`Emblème de ${SITE.name}`} fill sizes="(max-width: 1024px) 60vw, 250px" priority className="rounded-full object-cover" />
-            </span>
-          </figure>
-          <dl className="mt-8 grid grid-cols-3 divide-x divide-rule border-y border-rule lg:mx-auto lg:max-w-[420px]">
-            {figures.map((f) => (
-              <div key={f.label} className="flex flex-col px-4 py-5 first:pl-0 last:pr-0">
-                <dd className="t-figure order-1 text-ink">{f.value}</dd>
-                <dt className="t-label order-2 mt-3 text-stone">{f.label}</dt>
+          <dl className="rise mt-14 grid max-w-xl grid-cols-3 gap-3 border-t border-white/10 pt-8" style={{ '--d': '120ms' } as React.CSSProperties}>
+            {stats.map((s) => (
+              <div key={s.label}>
+                <dd className="t-num whitespace-nowrap text-ivory">
+                  <Counter value={s.value} suffix={s.suffix} />
+                </dd>
+                <dt className="mt-2 text-xs font-semibold uppercase tracking-wider text-ivory/50">{s.label}</dt>
               </div>
             ))}
           </dl>
         </div>
+
+        <div className="relative lg:col-span-5">
+          <div className="parallax-slow rise mx-auto max-w-[380px] lg:max-w-none" style={{ '--d': '100ms' } as React.CSSProperties}>
+            <ChadDots className="h-auto w-full text-ivory/80 drop-shadow-[0_0_24px_rgb(246_178_27/0.15)]" title="Carte du Tchad — N'Djamena" />
+          </div>
+          <div className="rise absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-white/10 bg-night/80 px-4 py-2 text-xs font-semibold text-ivory/80 backdrop-blur lg:bottom-8" style={{ '--d': '400ms' } as React.CSSProperties}>
+            <span className="mr-2 inline-block h-2 w-2 rounded-full bg-sun align-middle" aria-hidden />
+            Basés à N&apos;Djamena · actifs dans tout le pays
+          </div>
+        </div>
       </div>
-      <Ruler className="mt-20 lg:mt-28" />
     </section>
   )
 }

@@ -7,9 +7,9 @@ export default async function ArticleList({ page, category }: { page: number; ca
 
   if (articles.length === 0) {
     return (
-      <div className="border-y border-rule py-20 text-center">
+      <div className="card p-12 text-center">
         <p className="t-h3">Aucun article pour le moment</p>
-        <p className="mt-3 text-graphite">
+        <p className="mt-2 text-ink-soft">
           {category !== 'all' ? "Aucun article n'a encore été publié dans cette catégorie." : 'Revenez bientôt pour découvrir nos actualités.'}
         </p>
       </div>
@@ -18,13 +18,12 @@ export default async function ArticleList({ page, category }: { page: number; ca
 
   return (
     <>
-      <p className="t-label mb-8 text-stone">
-        {total} article{total > 1 ? 's' : ''}
-        {totalPages > 1 && ` · page ${page} sur ${totalPages}`}
+      <p className="mb-6 text-sm font-semibold text-mute">
+        {total} article{total > 1 ? 's' : ''}{totalPages > 1 && ` · page ${page} sur ${totalPages}`}
       </p>
-      <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-        {articles.map((article, i) => (
-          <ArticleCard key={article.id} article={article} priority={page === 1 && i < 3} headingLevel="h2" />
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {articles.map((a, i) => (
+          <ArticleCard key={a.id} article={a} index={i % 3} priority={page === 1 && i < 3} headingLevel="h2" />
         ))}
       </div>
       <BlogPagination currentPage={page} totalPages={totalPages} category={category} />

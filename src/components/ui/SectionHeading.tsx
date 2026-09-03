@@ -1,21 +1,24 @@
 type Props = {
-  number: string
   eyebrow: string
-  title?: string
-  children?: React.ReactNode
+  title: React.ReactNode
+  description?: string
+  dark?: boolean
+  align?: 'left' | 'center'
   className?: string
+  children?: React.ReactNode
 }
 
-/** En-tête de section : filet pleine largeur, numéro + eyebrow en terre, titre serif. */
-export default function SectionHeading({ number, eyebrow, title, children, className = '' }: Props) {
+/** En-tête de section : badge « eyebrow », grand titre, chapô facultatif. */
+export default function SectionHeading({ eyebrow, title, description, dark = false, align = 'left', className = '', children }: Props) {
+  const center = align === 'center'
   return (
-    <div className={`rule pt-5 ${className}`}>
-      <p className="t-label flex items-center gap-3 text-terre">
-        <span className="index-number text-base">{number}</span>
-        <span aria-hidden className="h-px w-6 bg-terre/60" />
+    <div className={`reveal ${center ? 'mx-auto max-w-2xl text-center' : 'max-w-3xl'} ${className}`}>
+      <span className={`badge ${dark ? 'border-white/15 text-sun' : 'border-ink/10 bg-white text-ink'}`}>
+        <span className="h-1.5 w-1.5 rounded-full bg-sun" aria-hidden />
         {eyebrow}
-      </p>
-      {title && <h2 className="t-h2 mt-6 max-w-3xl">{title}</h2>}
+      </span>
+      <h2 className={`t-h2 mt-5 ${dark ? 'text-ivory' : 'text-ink'}`}>{title}</h2>
+      {description && <p className={`t-lead mt-5 ${dark ? 'text-ivory/70' : 'text-ink-soft'}`}>{description}</p>}
       {children}
     </div>
   )

@@ -4,17 +4,23 @@ import '../globals.css'
 
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+import Reveal from '@/components/ui/Reveal'
 import { SITE } from '@/lib/site'
 
-/* Police de titrage auto-hébergée (sous-ensemble latin, ≈ 43 Ko pour les deux styles). */
-const instrument = localFont({
-  src: [
-    { path: '../../fonts/InstrumentSerif-Regular.woff2', weight: '400', style: 'normal' },
-    { path: '../../fonts/InstrumentSerif-Italic.woff2', weight: '400', style: 'italic' },
-  ],
-  variable: '--font-instrument',
+/* Polices variables auto-hébergées (sous-ensembles latins, ≈ 47 Ko au total). */
+const space = localFont({
+  src: '../../fonts/SpaceGrotesk-Variable.woff2',
+  weight: '300 700',
+  variable: '--font-space',
   display: 'swap',
-  adjustFontFallback: 'Times New Roman',
+  adjustFontFallback: 'Arial',
+})
+const manrope = localFont({
+  src: '../../fonts/Manrope-Variable.woff2',
+  weight: '200 800',
+  variable: '--font-manrope',
+  display: 'swap',
+  adjustFontFallback: 'Arial',
 })
 
 export const metadata: Metadata = {
@@ -41,18 +47,18 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#f5f2eb',
+  themeColor: '#0b1411',
   width: 'device-width',
   initialScale: 1,
 }
 
 export default function FrontendLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="fr" className={instrument.variable}>
+    <html lang="fr" className={`${space.variable} ${manrope.variable}`}>
       <body className="flex min-h-screen flex-col">
         <a
           href="#contenu"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-paper"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-sun focus:px-4 focus:py-2 focus:text-night"
         >
           Aller au contenu
         </a>
@@ -61,6 +67,7 @@ export default function FrontendLayout({ children }: Readonly<{ children: React.
           {children}
         </main>
         <Footer />
+        <Reveal />
       </body>
     </html>
   )

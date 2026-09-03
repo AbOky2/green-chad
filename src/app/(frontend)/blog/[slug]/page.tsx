@@ -24,19 +24,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const article = await getArticleBySlug(slug)
   if (!article) return { title: 'Article introuvable' }
-
   return {
     title: article.title,
     description: article.excerpt || article.title,
     alternates: { canonical: `/blog/${article.slug}` },
-    openGraph: {
-      type: 'article',
-      title: article.title,
-      description: article.excerpt || '',
-      publishedTime: article.publishedAt,
-      authors: [article.author],
-      images: [article.hero.url],
-    },
+    openGraph: { type: 'article', title: article.title, description: article.excerpt || '', publishedTime: article.publishedAt, authors: [article.author], images: [article.hero.url] },
   }
 }
 
@@ -60,58 +52,42 @@ export default async function ArticlePage({ params }: Props) {
     <article>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <header className="container-custom pt-12 lg:pt-20">
-        <Link href="/blog" className="link-text text-sm">
+      <header className="container-custom pt-28 sm:pt-32">
+        <Link href="/blog" className="link-arrow text-sm text-ink-soft hover:text-ink">
           <ArrowLeft />
           Actualités
         </Link>
-
-        <div className="mx-auto mt-10 max-w-[680px]">
-          <p className="rise flex flex-wrap items-center gap-x-3 gap-y-1">
+        <div className="mx-auto mt-8 max-w-3xl text-center">
+          <div className="rise flex flex-wrap items-center justify-center gap-3">
             <CategoryTag value={article.category} />
-            <span className="t-label text-stone">·</span>
-            <time dateTime={article.publishedAt} className="t-label text-stone">{formatDate(article.publishedAt)}</time>
-            <span className="t-label text-stone">·</span>
-            <span className="t-label text-stone">{article.readingMinutes} min de lecture</span>
-          </p>
-          <h1 className="t-h1 rise rise-1 mt-6">{article.title}</h1>
-          {article.excerpt && <p className="t-lead rise rise-2 mt-6">{article.excerpt}</p>}
-          <p className="rise rise-2 mt-6 text-sm text-stone">Par {article.author}</p>
+            <span className="text-xs font-semibold uppercase tracking-wider text-mute">
+              <time dateTime={article.publishedAt}>{formatDate(article.publishedAt)}</time> · {article.readingMinutes} min de lecture
+            </span>
+          </div>
+          <h1 className="t-h1 rise mt-6" style={{ '--d': '80ms' } as React.CSSProperties}>{article.title}</h1>
+          {article.excerpt && <p className="t-lead rise mt-5 text-ink-soft" style={{ '--d': '160ms' } as React.CSSProperties}>{article.excerpt}</p>}
+          <p className="rise mt-5 text-sm font-semibold text-mute" style={{ '--d': '200ms' } as React.CSSProperties}>Par {article.author}</p>
         </div>
       </header>
 
-      <div className="container-custom mt-12">
-        <figure className="rise rise-3 relative mx-auto aspect-[16/9] max-w-[1000px] overflow-hidden border border-rule bg-paper-2">
-          <Image
-            src={article.hero.url}
-            alt={article.hero.alt}
-            fill
-            priority
-            sizes="(max-width: 1024px) 100vw, 1000px"
-            className="object-cover"
-          />
+      <div className="container-custom mt-10">
+        <figure className="rise relative mx-auto aspect-[16/9] max-w-5xl overflow-hidden rounded-4xl bg-ivory-2 shadow-lift" style={{ '--d': '240ms' } as React.CSSProperties}>
+          <Image src={article.hero.url} alt={article.hero.alt} fill priority sizes="(max-width: 1024px) 100vw, 1024px" className="object-cover" />
         </figure>
       </div>
 
       <div className="container-custom py-12 lg:py-20">
-        <div className="mx-auto max-w-[680px]">
+        <div className="mx-auto max-w-[700px]">
           <RichText content={article.content} className="rich-text" />
         </div>
       </div>
 
       <aside className="container-custom pb-20 lg:pb-28">
-        <div className="mx-auto max-w-[680px] border-t border-rule pt-10">
-          <p className="serif text-3xl leading-tight">
-            Vous souhaitez soutenir nos actions <em>sur le terrain</em> ?
-          </p>
+        <div className="mx-auto max-w-[700px] rounded-4xl bg-night p-8 text-ivory sm:p-10">
+          <p className="t-h3 sm:text-2xl">Vous souhaitez soutenir nos actions <span className="text-sun">sur le terrain</span> ?</p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/#contact" className="btn-primary">
-              Nous contacter
-              <ArrowRight />
-            </Link>
-            <Link href="/blog" className="btn-secondary">
-              Autres articles
-            </Link>
+            <Link href="/#contact" className="btn-sun">Nous contacter<ArrowRight /></Link>
+            <Link href="/blog" className="btn-ghost-light">Autres articles</Link>
           </div>
         </div>
       </aside>

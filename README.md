@@ -48,6 +48,10 @@ Les logos sont dans `public/partners/` (PNG, hauteur 240 px) et la liste dans `s
 - `/documents` : documents officiels déposés par les membres (règlement intérieur, chartes…)
 - `/admin` : espace membres (Payload CMS) — voir `PAYLOAD_SETUP.md`
 
+## Design
+
+La direction artistique, la veille (Dribbble, Figma Community, sites primés) et les sources sont documentées dans `docs/DESIGN_RESEARCH.md`. Polices auto-hébergées : Space Grotesk (titres) et Manrope (texte), licence OFL dans `src/fonts/`.
+
 ## Performance
 
 - Les pages lisent la base **directement via l'API locale Payload** (plus d'appel HTTP du serveur vers lui-même) et sont mises en cache ; le cache est invalidé automatiquement à chaque publication dans l'admin.

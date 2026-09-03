@@ -1,49 +1,45 @@
+import Image from 'next/image'
+
 import SectionHeading from '@/components/ui/SectionHeading'
 import { SITE } from '@/lib/site'
 
-const points = [
-  {
-    lead: 'Mission.',
-    text: 'Outiller les citoyens tchadiens pour leur permettre de relever efficacement le défi du développement durable.',
-  },
-  {
-    lead: 'Vision.',
-    text: "Protéger l'environnement et promouvoir les initiatives de la population orientées vers le développement durable.",
-  },
-  {
-    lead: 'Statut.',
-    text: `ONG nationale reconnue par l'${SITE.decree.charAt(0).toLowerCase()}${SITE.decree.slice(1)}, œuvrant pour l'intérêt général.`,
-  },
+const pillars = [
+  { n: '01', title: 'Mission', text: 'Outiller les citoyens tchadiens pour leur permettre de relever efficacement le défi du développement durable.' },
+  { n: '02', title: 'Vision', text: "Protéger l'environnement et promouvoir les initiatives de la population orientées vers le développement durable." },
+  { n: '03', title: 'Statut', text: `ONG nationale reconnue (${SITE.decree}), œuvrant pour l'intérêt général au service des communautés.` },
 ]
 
 export default function About() {
   return (
-    <section id="about" className="container-custom section">
-      <SectionHeading number="01" eyebrow="À propos" />
-
-      <div className="mt-12 grid gap-12 lg:grid-cols-12 lg:gap-16">
-        <div className="lg:col-span-4">
-          <h2 className="t-h2">Engagés pour le Tchad de demain</h2>
+    <section id="about" className="section container-custom">
+      <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+        <div className="lg:col-span-5">
+          <SectionHeading
+            eyebrow="À propos"
+            title={<>Engagés pour le Tchad de <span className="text-leaf-deep">demain</span></>}
+            description="Green-Chad est née de la volonté de préserver notre patrimoine naturel tout en favorisant le développement socio-économique. Protéger l'environnement et améliorer la vie des populations sont, pour nous, un seul et même combat."
+          />
+          <div className="reveal mt-10 flex items-center gap-4 rounded-3xl bg-white p-4 shadow-float" style={{ '--d': '120ms' } as React.CSSProperties}>
+            <Image src="/logo.jpg" alt="" width={56} height={56} className="h-14 w-14 rounded-2xl object-cover" />
+            <div>
+              <p className="font-bold">{SITE.name}</p>
+              <p className="text-sm text-mute">Depuis {SITE.since} · {SITE.address}</p>
+            </div>
+          </div>
         </div>
-        <div className="lg:col-span-8">
-          <p className="t-lead max-w-2xl">
-            L&apos;ONG Green-Chad est née de la volonté de préserver notre patrimoine naturel tout en favorisant le
-            développement socio-économique des communautés.
-          </p>
-          <dl className="mt-10 divide-y divide-rule border-y border-rule">
-            {points.map((p) => (
-              <div key={p.lead} className="grid gap-2 py-6 sm:grid-cols-12 sm:gap-6">
-                <dt className="serif text-2xl italic text-terre sm:col-span-3">{p.lead}</dt>
-                <dd className="text-graphite sm:col-span-9">{p.text}</dd>
+
+        <ul className="grid gap-4 lg:col-span-7">
+          {pillars.map((p, i) => (
+            <li key={p.n} className="reveal card card-hover group flex gap-6 p-7 sm:p-8" style={{ '--d': `${i * 90}ms` } as React.CSSProperties}>
+              <span className="display shrink-0 text-3xl font-bold text-sun transition-colors group-hover:text-leaf">{p.n}</span>
+              <div>
+                <h3 className="t-h3">{p.title}</h3>
+                <p className="mt-2 text-ink-soft">{p.text}</p>
               </div>
-            ))}
-          </dl>
-        </div>
+            </li>
+          ))}
+        </ul>
       </div>
-
-      <blockquote className="serif mt-20 max-w-5xl text-3xl leading-[1.15] text-ink sm:text-4xl lg:mt-28 lg:text-5xl">
-        « La protection de l&apos;environnement est <em>indissociable</em> du bien-être des populations. »
-      </blockquote>
     </section>
   )
 }
