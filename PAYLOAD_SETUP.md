@@ -159,7 +159,7 @@ En développement (`npm run dev`), Payload adapte automatiquement le schéma de 
 
 - `npm run build` exécute d'abord `node scripts/db-migrate.mjs`, qui applique les migrations de `src/migrations/` sur la base indiquée par `DATABASE_URL` (Vercel dispose de cette variable au build). Les migrations du projet sont idempotentes : elles ne créent que ce qui manque et ne suppriment aucune donnée.
 - `npm run db:migrate` applique les migrations à la main (par exemple sur la base Neon depuis votre poste, avec `DATABASE_URL` dans `.env.local`).
-- Après avoir modifié une collection : `npm run dev` (le schéma est poussé sur votre base de développement), puis `npm run db:migrate:create nom_du_changement` pour générer la migration correspondante, à vérifier puis committer avec le code.
+- Après avoir modifié une collection : `npm run db:migrate:create nom_du_changement` pour générer la migration, la relire, puis `npm run db:migrate` pour l'appliquer à votre base de développement. Le schéma n'est **jamais** modifié automatiquement au démarrage (`push: false`) : c'est ce qui garantit que développement et production restent identiques.
 - Écrivez les migrations de façon **idempotente** (`IF NOT EXISTS`, `IF EXISTS`) : une migration rejouée ne doit jamais échouer ni détruire de données.
 - Le script retire au passage le marqueur « dev » que Payload laisse dans la table `payload_migrations` quand la base a été mise à jour en mode développement ; sans cela, `payload migrate` s'arrêterait sur une question interactive impossible à répondre dans un build.
 

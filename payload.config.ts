@@ -68,6 +68,11 @@ export default buildConfig({
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: postgresAdapter({
+    // Le schéma est géré par les migrations (`npm run db:migrate`), y compris en développement.
+    // Sans cela, `next dev` propose de supprimer les colonnes que le plugin de stockage
+    // n'ajoute qu'en présence d'un jeton Blob : la base locale divergerait de la production
+    // et une migration générée ensuite pourrait supprimer ces colonnes en production.
+    push: false,
     pool: {
       connectionString: databaseUrl,
       // Vercel (serverless) : garder peu de connexions ouvertes vers Neon.
