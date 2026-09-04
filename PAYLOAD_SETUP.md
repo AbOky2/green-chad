@@ -153,6 +153,23 @@ Le stockage gratuit est limité (≈ 1 Go). Plusieurs garde-fous sont en place :
 
 Pour libérer de l'espace : supprimez les anciens médias/documents inutiles dans l'admin (le fichier est supprimé du Blob en même temps).
 
+## 🗄️ Migrations de base de données (important en production)
+
+En développement (`npm run dev`), Payload adapte automatiquement le schéma de la base. **En production, il ne le fait jamais** : toute évolution des collections doit passer par une migration, sinon les requêtes échouent (par exemple une liste d'articles vide alors que les articles existent).
+
+- `npm run build` exécute d'abord `node scripts/db-migrate.mjs`, qui applique les migrations de `src/migrations/` sur la base indiquée par `DATABASE_URL` (Vercel dispose de cette variable au build). Les migrations du projet sont idempotentes : elles ne créent que ce qui manque et ne suppriment aucune donnée.
+- `npm run db:migrate` applique les migrations à la main (par exemple sur la base Neon depuis votre poste, avec `DATABASE_URL` dans `.env.local`).
+- Après avoir modifié une collection : `npm run db:migrate:create nom_du_changement` pour générer la migration, la relire, puis `npm run db:migrate` pour l'appliquer à votre base de développement. Le schéma n'est **jamais** modifié automatiquement au démarrage (`push: false`) : c'est ce qui garantit que développement et production restent identiques.
+- Écrivez les migrations de façon **idempotente** (`IF NOT EXISTS`, `IF EXISTS`) : une migration rejouée ne doit jamais échouer ni détruire de données.
+- Le script retire au passage le marqueur « dev » que Payload laisse dans la table `payload_migrations` quand la base a été mise à jour en mode développement ; sans cela, `payload migrate` s'arrêterait sur une question interactive impossible à répondre dans un build.
+
+## 🗂️ Où sont rangés les fichiers dans Vercel Blob
+
+- **Médias (images)** : à la racine du store, sans préfixe. C'est l'emplacement historique de toutes les images déjà en ligne ; leur donner un dossier changerait leur URL et les images ne s'afficheraient plus.
+- **Documents** : dans le dossier `documents/`, la collection étant récente.
+
+Ces valeurs sont centralisées dans `src/payload/storage.ts` (`MEDIA_PREFIX`, `DOCUMENTS_PREFIX`). Le plugin de stockage n'ajoute ses colonnes au schéma que lorsqu'un jeton Blob est présent : `npm run db:migrate:create` fournit donc automatiquement un jeton de schéma afin que les migrations générées en local correspondent exactement à la production.
+
 ## 📤 Déploiement sur Vercel
 
 ### Variables d'environnement Vercel
@@ -169,6 +186,8 @@ Dans **Vercel** → votre projet → **Settings** → **Environment Variables**,
 | `EMAIL_APP_PASSWORD` | Mot de passe Gmail | Production, Preview |
 | `BLOB_READ_WRITE_TOKEN` | Jeton du store Vercel Blob (Storage → Blob → Connect) | Production, Preview |
 | `MAX_FILE_SIZE_MB` / `STORAGE_QUOTA_MB` | (facultatif) limites de stockage | Production |
+
+`DATABASE_URL` doit aussi être disponible **au build** (c'est le cas par défaut sur Vercel) pour que les migrations s'appliquent avant la génération des pages.
 
 ### Redéploiement
 
@@ -238,7 +257,7 @@ Puis dans `src/lib/categories.ts`, ajoutez la couleur et le libellé court du fi
 → Le quota (`STORAGE_QUOTA_MB`) est atteint : supprimez des fichiers inutiles ou augmentez la valeur si votre offre Vercel le permet.
 
 ### Articles ne s'affichent pas sur /blog
-→ Vérifiez que les articles ont `status: published` dans l'admin
+→ Vérifiez que les articles ont `status: published` dans l'admin. Si aucun article n'apparaît alors qu'ils existent, la base n'a probablement pas reçu les dernières migrations : lancez `npm run db:migrate` (voir la section Migrations) puis redéployez.
 
 ## ✨ Fonctionnalités disponibles
 

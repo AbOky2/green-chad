@@ -13,7 +13,13 @@ import { Articles } from './src/payload/collections/Articles'
 import { Media } from './src/payload/collections/Media'
 import { Documents } from './src/payload/collections/Documents'
 import { blobClientUploads } from './src/payload/plugins/blobClientUploads'
-import { DOCUMENT_MIME_TYPES, MAX_FILE_SIZE_BYTES, MEDIA_MIME_TYPES } from './src/payload/storage'
+import {
+  DOCUMENT_MIME_TYPES,
+  DOCUMENTS_PREFIX,
+  MAX_FILE_SIZE_BYTES,
+  MEDIA_MIME_TYPES,
+  MEDIA_PREFIX,
+} from './src/payload/storage'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -62,6 +68,11 @@ export default buildConfig({
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: postgresAdapter({
+    // Le schéma est géré par les migrations (`npm run db:migrate`), y compris en développement.
+    // Sans cela, `next dev` propose de supprimer les colonnes que le plugin de stockage
+    // n'ajoute qu'en présence d'un jeton Blob : la base locale divergerait de la production
+    // et une migration générée ensuite pourrait supprimer ces colonnes en production.
+    push: false,
     pool: {
       connectionString: databaseUrl,
       // Vercel (serverless) : garder peu de connexions ouvertes vers Neon.
@@ -84,17 +95,22 @@ export default buildConfig({
     vercelBlobStorage({
       enabled: Boolean(blobToken),
       token: blobToken,
+      // Les champs du plugin (dont « prefix ») font partie du schéma même sans jeton :
+      // le schéma est ainsi identique en local et en production, et les migrations
+      // générées ici s'appliquent telles quelles au déploiement.
+      alwaysInsertFields: true,
       // URLs publiques directes vers le CDN Blob : les fichiers ne transitent plus par une fonction serverless.
+      // Les médias restent à la racine du store (voir MEDIA_PREFIX) pour ne pas invalider les images déjà en ligne.
       collections: {
-        media: { prefix: 'media', disablePayloadAccessControl: true },
-        documents: { prefix: 'documents', disablePayloadAccessControl: true },
+        media: { prefix: MEDIA_PREFIX, disablePayloadAccessControl: true },
+        documents: { prefix: DOCUMENTS_PREFIX, disablePayloadAccessControl: true },
       },
     }),
     blobClientUploads({
       token: blobToken,
       collections: {
-        media: { prefix: 'media', mimeTypes: MEDIA_MIME_TYPES },
-        documents: { prefix: 'documents', mimeTypes: DOCUMENT_MIME_TYPES },
+        media: { prefix: MEDIA_PREFIX, mimeTypes: MEDIA_MIME_TYPES },
+        documents: { prefix: DOCUMENTS_PREFIX, mimeTypes: DOCUMENT_MIME_TYPES },
       },
     }),
   ],

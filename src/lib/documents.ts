@@ -46,7 +46,13 @@ const toDownloadUrl = (url: string): string => {
   return u.toString()
 }
 
-const toPublic = (d: PayloadDocument): PublicDocument | null => {
+/** Forme exacte d'un document tel que renvoyé par la requête publique (voir le `select`). */
+type DocumentListDoc = Pick<
+  PayloadDocument,
+  'id' | 'title' | 'description' | 'category' | 'publishedAt' | 'createdAt' | 'uploadedBy' | 'url' | 'filename' | 'mimeType' | 'filesize'
+>
+
+const toPublic = (d: DocumentListDoc): PublicDocument | null => {
   if (!d.url) return null
   const filename = d.filename ?? d.title
   const mimeType = d.mimeType ?? 'application/octet-stream'
@@ -75,7 +81,21 @@ export const getPublicDocuments = unstable_cache(
         where: { status: { equals: 'published' } },
         sort: '-publishedAt',
         limit: 200,
+        pagination: false,
         depth: 1,
+        select: {
+          title: true,
+          description: true,
+          category: true,
+          publishedAt: true,
+          createdAt: true,
+          uploadedBy: true,
+          url: true,
+          filename: true,
+          mimeType: true,
+          filesize: true,
+        },
+        populate: { users: { name: true } },
       })
       const publicDocs = docs.map(toPublic).filter((d): d is PublicDocument => d !== null)
       return DOCUMENT_CATEGORIES.map((c) => ({

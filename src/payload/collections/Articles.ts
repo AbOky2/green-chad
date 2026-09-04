@@ -31,6 +31,12 @@ export const Articles: CollectionConfig = {
     listSearchableFields: ['title', 'excerpt'],
   },
   defaultSort: '-publishedAt',
+  // Index composites : la requête du blog filtre sur le statut (et la catégorie)
+  // puis trie par date de publication. Un seul index couvre chaque cas.
+  indexes: [
+    { fields: ['status', 'publishedAt'] },
+    { fields: ['status', 'category', 'publishedAt'] },
+  ],
   access: {
     read: publishedOrAuthenticated,
     create: authenticated,

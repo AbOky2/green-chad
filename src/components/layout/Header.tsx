@@ -22,8 +22,16 @@ export default function Header() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
+  const [lastPath, setLastPath] = useState(pathname)
   const menuId = useId()
   const onDark = pathname === '/' && !scrolled
+
+  // Changement de page (y compris via le bouton « précédent ») : le menu se referme.
+  // Sans cela, le panneau restait ouvert et le défilement bloqué jusqu'au rechargement.
+  if (pathname !== lastPath) {
+    setLastPath(pathname)
+    if (open) setOpen(false)
+  }
 
   useEffect(() => {
     let ticking = false

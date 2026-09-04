@@ -8,7 +8,7 @@ export const SITE = {
   url: (process.env.NEXT_PUBLIC_SERVER_URL || 'https://www.greenchad.com').replace(/\/$/, ''),
   email: 'greenchad2010@gmail.com',
   phones: ['+235 66 28 67 31', '+235 92 32 00 39'],
-  address: "Quartier Sabangali, N'Djamena, Tchad",
+  address: 'Repos 2 en face Lycée de la Liberté',
   recognition: 'ONG nationale reconnue · N°0036/2025',
   decree: 'Arrêté N°136 du 17/07/2025',
   since: 2023,
