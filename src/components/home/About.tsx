@@ -23,7 +23,7 @@ export default function About() {
             <Image src="/logo.jpg" alt="" width={56} height={56} className="h-14 w-14 rounded-2xl object-cover" />
             <div>
               <p className="font-bold">{SITE.name}</p>
-              <p className="text-sm text-mute">Depuis {SITE.since} · {SITE.addressShort}</p>
+              <p className="text-sm text-mute">Depuis {SITE.since} · {SITE.address}</p>
             </div>
           </div>
         </div>
