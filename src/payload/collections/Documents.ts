@@ -35,6 +35,8 @@ export const Documents: CollectionConfig = {
     listSearchableFields: ['title', 'description'],
   },
   defaultSort: '-publishedAt',
+  // Index composite : la page publique filtre sur le statut puis trie par date.
+  indexes: [{ fields: ['status', 'publishedAt'] }],
   access: {
     read: publishedOrAuthenticated,
     create: authenticated,

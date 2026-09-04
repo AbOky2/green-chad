@@ -14,7 +14,7 @@
     "generate:importmap": "payload generate:importmap",
     "generate:secret": "node -e \"console.log('PAYLOAD_SECRET=' + require('crypto').randomBytes(32).toString('hex'))\"",
     "db:migrate": "node scripts/db-migrate.mjs",
-    "db:migrate:create": "payload migrate:create"
+    "db:migrate:create": "node scripts/db-migrate-create.mjs"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.74.0",

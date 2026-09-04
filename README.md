@@ -56,6 +56,8 @@ La direction artistique, la veille (Dribbble, Figma Community, sites primés) et
 
 ## Performance
 
+- Les listes ne chargent que les champs affichés (le contenu enrichi des articles est exclu) : ~46 Ko de données par page de blog ramenés à ~9 Ko.
+- Index composites sur `(statut, date)` et `(statut, catégorie, date)` : les requêtes du blog et de la page d'accueil s'appuient dessus.
 - Les pages lisent la base **directement via l'API locale Payload** (plus d'appel HTTP du serveur vers lui-même) et sont mises en cache ; le cache est invalidé automatiquement à chaque publication dans l'admin.
 - Les fichiers (images, documents) sont servis **directement par le CDN Vercel Blob**.
 - Aucune bibliothèque d'animation ni d'icônes : transitions en CSS natif, JavaScript client réduit au strict minimum (menu mobile, formulaire de contact).

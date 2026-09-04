@@ -20,6 +20,16 @@ export const MAX_FILE_SIZE_BYTES = readNumber('MAX_FILE_SIZE_MB', 20) * MB
 export const STORAGE_QUOTA_BYTES = readNumber('STORAGE_QUOTA_MB', 1000) * MB
 export const STORAGE_WARN_PERCENT = readNumber('STORAGE_WARN_PERCENT', 80)
 
+/**
+ * Préfixes (dossiers) dans le store Vercel Blob.
+ *
+ * Les médias historiques ont été déposés à la racine du store : leur donner un préfixe
+ * casserait l'URL de toutes les images déjà en ligne. Ils restent donc à la racine.
+ * La collection Documents est récente : elle peut être rangée dans son propre dossier.
+ */
+export const MEDIA_PREFIX = ''
+export const DOCUMENTS_PREFIX = 'documents'
+
 /** Collections dont les fichiers comptent dans le quota. */
 export const STORAGE_COLLECTIONS = ['media', 'documents'] as const
 export type StorageCollection = (typeof STORAGE_COLLECTIONS)[number]

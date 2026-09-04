@@ -7,7 +7,7 @@ import { getStorageUsage } from '../hooks/storage'
 import { getBlobBaseUrl, MAX_FILE_SIZE_BYTES, STORAGE_QUOTA_BYTES } from '../storage'
 
 export type ClientUploadCollection = {
-  /** Sous-dossier dans le store Blob (ex: "documents"). */
+  /** Sous-dossier dans le store Blob ; chaîne vide pour la racine du store. */
   prefix: string
   /** Types MIME acceptés (vérifiés par le jeton Vercel puis par Payload). */
   mimeTypes: string[]
@@ -22,6 +22,14 @@ type Options = {
 const CLIENT_HANDLER_PATH = '/src/payload/components/ClientUploadHandler#ClientUploadHandler'
 const UPLOAD_ROUTE = '/blob-client-upload'
 const USAGE_ROUTE = '/storage-usage'
+
+/** Le chemin doit être exactement `<prefix>/<nom de fichier>` (ou `<nom de fichier>` sans préfixe). */
+const isValidPath = (pathname: string, prefix: string): boolean => {
+  const directory = prefix ? `${prefix}/` : ''
+  if (!pathname.startsWith(directory)) return false
+  const filename = pathname.slice(directory.length)
+  return filename.length > 0 && !filename.includes('/') && !filename.includes('..')
+}
 
 type UploadHandler = NonNullable<
   Extract<NonNullable<NonNullable<Config['collections']>[number]['upload']>, object>['handlers']
@@ -77,7 +85,7 @@ export const blobClientUploads =
           extra: {
             allowedTypes: options.mimeTypes,
             maxFileSize: MAX_FILE_SIZE_BYTES,
-            prefix: `${options.prefix}/`,
+            prefix: options.prefix ? `${options.prefix}/` : '',
             usagePath: USAGE_ROUTE,
           },
         },
@@ -111,7 +119,7 @@ export const blobClientUploads =
           const slug = clientPayload as UploadCollectionSlug | null
           const collection = slug ? collections[slug] : undefined
           if (!slug || !collection) throw new APIError('Collection inconnue.', 400)
-          if (!pathname.startsWith(`${collection.prefix}/`) || pathname.includes('..')) {
+          if (!isValidPath(pathname, collection.prefix)) {
             throw new APIError('Chemin de fichier invalide.', 400)
           }
 

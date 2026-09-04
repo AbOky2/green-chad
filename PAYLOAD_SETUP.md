@@ -160,7 +160,15 @@ En développement (`npm run dev`), Payload adapte automatiquement le schéma de 
 - `npm run build` exécute d'abord `node scripts/db-migrate.mjs`, qui applique les migrations de `src/migrations/` sur la base indiquée par `DATABASE_URL` (Vercel dispose de cette variable au build). Les migrations du projet sont idempotentes : elles ne créent que ce qui manque et ne suppriment aucune donnée.
 - `npm run db:migrate` applique les migrations à la main (par exemple sur la base Neon depuis votre poste, avec `DATABASE_URL` dans `.env.local`).
 - Après avoir modifié une collection : `npm run dev` (le schéma est poussé sur votre base de développement), puis `npm run db:migrate:create nom_du_changement` pour générer la migration correspondante, à vérifier puis committer avec le code.
+- Écrivez les migrations de façon **idempotente** (`IF NOT EXISTS`, `IF EXISTS`) : une migration rejouée ne doit jamais échouer ni détruire de données.
 - Le script retire au passage le marqueur « dev » que Payload laisse dans la table `payload_migrations` quand la base a été mise à jour en mode développement ; sans cela, `payload migrate` s'arrêterait sur une question interactive impossible à répondre dans un build.
+
+## 🗂️ Où sont rangés les fichiers dans Vercel Blob
+
+- **Médias (images)** : à la racine du store, sans préfixe. C'est l'emplacement historique de toutes les images déjà en ligne ; leur donner un dossier changerait leur URL et les images ne s'afficheraient plus.
+- **Documents** : dans le dossier `documents/`, la collection étant récente.
+
+Ces valeurs sont centralisées dans `src/payload/storage.ts` (`MEDIA_PREFIX`, `DOCUMENTS_PREFIX`). Le plugin de stockage n'ajoute ses colonnes au schéma que lorsqu'un jeton Blob est présent : `npm run db:migrate:create` fournit donc automatiquement un jeton de schéma afin que les migrations générées en local correspondent exactement à la production.
 
 ## 📤 Déploiement sur Vercel
 
