@@ -170,6 +170,12 @@ En développement (`npm run dev`), Payload adapte automatiquement le schéma de 
 
 Ces valeurs sont centralisées dans `src/payload/storage.ts` (`MEDIA_PREFIX`, `DOCUMENTS_PREFIX`). Le plugin de stockage n'ajoute ses colonnes au schéma que lorsqu'un jeton Blob est présent : `npm run db:migrate:create` fournit donc automatiquement un jeton de schéma afin que les migrations générées en local correspondent exactement à la production.
 
+## 🔐 Accès à l'administration depuis plusieurs URL
+
+La configuration Payload ne définit **pas** `serverURL`, et ce n'est pas un oubli : Payload ajoute automatiquement cette valeur à sa liste CSRF. Dès lors, seule cette origine exacte peut utiliser le cookie de session. L'administration se retrouvait cassée sur toute autre URL (déploiement de prévisualisation Vercel, domaine avec ou sans « www ») : listes d'auteurs vides et message « Vous n'êtes pas autorisé à effectuer cette action » à chaque enregistrement, alors même que l'on est bien connecté.
+
+Le cookie reste protégé par `SameSite=Lax`, qui empêche déjà un autre site de l'envoyer sur une requête d'écriture. Si vous devez un jour restreindre explicitement les origines, renseignez `csrf: [...]` avec **toutes** les URL utilisées (domaine de production, alias, prévisualisations), sinon l'administration redeviendra inaccessible depuis celles qui manquent.
+
 ## 📤 Déploiement sur Vercel
 
 ### Variables d'environnement Vercel
