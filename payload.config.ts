@@ -43,7 +43,12 @@ const buildDatabaseUrl = (raw = ''): string => {
 const databaseUrl = buildDatabaseUrl(process.env.DATABASE_URL)
 
 export default buildConfig({
-  serverURL: process.env.NEXT_PUBLIC_SERVER_URL || undefined,
+  // Pas de `serverURL` : Payload l'ajouterait à sa liste CSRF (config/sanitize.js), et seule
+  // cette origine exacte pourrait alors utiliser le cookie de session. L'administration
+  // devenait inutilisable dès que l'URL consultée différait (déploiement de prévisualisation
+  // Vercel, domaine avec ou sans « www ») : plus aucun auteur dans les listes, et « Vous n'êtes
+  // pas autorisé » à chaque enregistrement. Le cookie reste protégé par SameSite=Lax, qui
+  // empêche déjà son envoi depuis un autre site.
   admin: {
     user: Users.slug,
     importMap: {
